@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bot Arena: Tactics</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="Stylesheet" type="text/css" href="css/game.css">
+    <link rel="shortcut icon" type="image/png" href="gfx/icon.ico"/>
+  </head>
+  <body>
+    <!-- Game Screen & Container -->
+    <div class="screen">
+      <canvas id="gameScreen"></canvas>
+    </div>
+    <!-- END Game Screen & Container -->
+
+    <!-- Game Data -->
+    <script type="text/javascript" src="data/maps.js"></script>
+    <!-- END Game Data -->
+
+    <!-- Code Files -->
+    <script type="text/javascript" src="js/screen.js"></script>
+    <script type="text/javascript" src="js/mousemanager.js"></script>
+    <script type="text/javascript" src="js/keymanager.js"></script>
+    <script type="text/javascript" src="js/assets.js"></script>
+    <script type="text/javascript" src="js/vector.js"></script>
+    <script type="text/javascript" src="js/timer.js"></script>
+    <script type="text/javascript" src="js/neuralnetwork.js"></script>
+    <script type="text/javascript" src="js/vision.js"></script>
+    <script type="text/javascript" src="js/map.js"></script>
+    <script type="text/javascript" src="js/entity.js"></script>
+    <script type="text/javascript" src="js/quadtree.js"></script>
+    <script type="text/javascript" src="js/collisionmanager.js"></script>
+    <script type="text/javascript" src="js/gamemanager.js"></script>
+    <script type="text/javascript" src="js/state.js"></script>
+    <script type="text/javascript" src="js/mainstate.js"></script>
+    <script type="text/javascript" src="js/playsetupstate.js"></script>
+    <script type="text/javascript" src="js/playmenustate.js"></script>
+    <script type="text/javascript" src="js/playstate.js"></script>
+    <script type="text/javascript" src="js/trainsetupstate.js"></script>
+    <script type="text/javascript" src="js/trainmenustate.js"></script>
+    <script type="text/javascript" src="js/trainstate.js"></script>
+    <script type="text/javascript" src="js/optionstate.js"></script>
+    <script type="text/javascript" src="js/helpstate.js"></script>
+    <script type="text/javascript" src="js/mapeditorsetupstate.js"></script>
+    <script type="text/javascript" src="js/mapeditorstate.js"></script>
+    <script type="text/javascript" src="js/mapeditornewstate.js"></script>
+    <script type="text/javascript" src="js/mapeditormenustate.js"></script>
+    <script type="text/javascript" src="js/game.js"></script>
+    <!-- END Code Files -->
+
+    <!-- Start Game Script -->
+    <script type="text/javascript">
+      new Game().start();
+    </script>
+    <!-- END Start Game Script -->
+  </body>
+</html>
