@@ -26,8 +26,8 @@ class Screen {
     this.ctx.imageSmoothingEnabled = false;
   };
   autoFullscreen() {
-    let newWidth = Math.floor(this.canvas.parentElement.clientWidth);
-    let newHeight = Math.floor(this.canvas.parentElement.clientHeight);
+    let newWidth = Math.floor(window.innerWidth);
+    let newHeight = Math.floor(window.innerHeight);
     let aspectRatio = this.canvas.width / this.canvas.height;
     if (newWidth / newHeight > aspectRatio) {//wide
       newWidth = Math.floor(newHeight * aspectRatio);

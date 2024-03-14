@@ -10,14 +10,19 @@ class State {
       this.parent = this.game.states[-1];
     }
     this.game.keys.reset();
+    this.game.mouse.reset();
     this.game.states.push(this);
   };
   leave() {
     if (this.game.states.length > 1) {
+      this.game.keys.reset();
+      this.game.mouse.reset();
       this.game.states.pop();
     }
   };
   reset() {
+    this.game.keys.reset();
+    this.game.mouse.reset();
     while (this.game.states.length > 1) {
       this.game.states.pop();
     }

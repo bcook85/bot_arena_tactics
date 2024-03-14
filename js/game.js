@@ -83,6 +83,7 @@ class Game {
     this.states[this.states.length - 1].render(this.screen.ctx);
     // Reset
     this.keys.reset();
+    this.mouse.reset();
   };
 };
 // Automatically Start Game
