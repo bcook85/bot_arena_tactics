@@ -10,38 +10,28 @@ class MapEditorState extends State {
     super(game);
     // Assets
     this.tileImages = this.game.gfx.tiles.toList(32, 32);
-    this.objectImages = [];
+    this.objectImages = this.game.gfx.objects.toList(32, 32);
     // Selection
     this.selected = 0;
     this.selectionType = MapEditorState.TYPES.tile;
     // Buttons
-    this.menuButton = new Button(
-      "Menu",
-      "16px Monospace",
-      128,16,116,24
-    );
-    this.tilesButton = new Button(
-      "Tiles",
-      "16px Monospace",
-      256,16,116,24
-    );// set selectionType, enter TileSelectState
-    this.collisionButton = new Button(
-      "Collision",
-      "16px Monospace",
-      378,16,116,24
-    );
-    this.objectsButton = new Button(
-      "Objects",
-      "16px Monospace",
-      512,16,116,24
-    );
+    this.items = ["Menu", "Tiles", "Collision", "Objects"];
+    this.buttons = [];
+    for (let i = 0; i < this.items.length; i++) {
+      this.buttons.push(new Button(
+        this.items[i],
+        "16px Monospace",
+        128 + (128 * i),
+        16,116,24
+      ));
+    }
     // Map
     this.tileDrawSize = 32;
-    this.map = MAPS[this.game.playerData.mapEditorSelectedMap];
+    this.map = MAPS[this.game.playerData.selectedMap];
     this.mapMaxWidth = this.map.w * this.tileDrawSize;
     this.mapMaxHeight = this.map.h * this.tileDrawSize;
     // Camera
-    this.cam = {"x": 0, "y": 0, "w": this.game.screenWidth, "h": this.game.screenHeight};
+    this.cam = {"x": -this.tileDrawSize, "y": -this.tileDrawSize, "w": this.game.screenWidth, "h": this.game.screenHeight};
     this.camMinX = 0 - this.tileDrawSize;
     this.camMaxX = this.mapMaxWidth - this.cam.w + this.tileDrawSize;
     this.camMinY = 0 - this.tileDrawSize;
@@ -53,27 +43,28 @@ class MapEditorState extends State {
   };
   update(dt) {
     // Buttons
-    this.menuButton.update(this.game.mouse);
-    if (this.menuButton.isClick) {
-      new MapEditorMenuState(this.game).enter();
-      return;
-    }
-    this.tilesButton.update(this.game.mouse);
-    if (this.tilesButton.isClick) {
-      this.selectionType = MapEditorState.TYPES.tile;
-      new TileSelectState(this.game).enter();
-      return;
-    }
-    this.collisionButton.update(this.game.mouse);
-    if (this.collisionButton.isClick) {
-      this.selectionType = MapEditorState.TYPES.collision;
-      return;
-    }
-    this.objectsButton.update(this.game.mouse);
-    if (this.objectsButton.isClick) {
-      this.selectionType = MapEditorState.TYPES.object;
-      // new ObjectSelectState(this.game).enter();
-      return;
+    for (let i = 0; i < this.buttons.length; i++) {
+      this.buttons[i].update(this.game.mouse);
+      if (this.buttons[i].isClick) {
+        switch(this.buttons[i].text) {
+          case "Menu":
+            new MapEditorMenuState(this.game).enter();
+            return;
+          case "Tiles":
+            this.selectionType = MapEditorState.TYPES.tile;
+            new TileSelectState(this.game).enter();
+            return;
+          case "Collision":
+            this.selectionType = MapEditorState.TYPES.collision;
+            return;
+          case "Objects":
+            this.selectionType = MapEditorState.TYPES.object;
+            new ObjectSelectState(this.game).enter();
+            return;
+          default:
+            break;
+        }
+      }
     }
     // Keyboard Controls
     if (this.game.keys.isDown("w")) {
@@ -89,44 +80,57 @@ class MapEditorState extends State {
       this.cam.x = Math.min(this.camMaxX, this.cam.x + this.camSpeed);
     }
     // Mouse
-    this.tileX = Math.floor((this.game.mouse.x + this.cam.x) / this.tileDrawSize);
-    this.tileY = Math.floor((this.game.mouse.y + this.cam.y) / this.tileDrawSize);
-    if (this.tileX < 0) { return; }
-    if (this.tileX >= this.map.w) { return; }
-    if (this.tileY < 0) { return; }
-    if (this.tileY >= this.map.h) { return; }
-    switch (this.selectionType) {
-      case MapEditorState.TYPES.tile:
-        if (this.game.mouse.isDown("left")) {
-          this.map.tiles[this.tileX][this.tileY] = this.selected;
-        }
-        break;
-      case MapEditorState.TYPES.collision:
-        if (this.game.mouse.isDown("left")) {
-          this.map.collisions[this.tileX][this.tileY] = 1;
-        } else if (this.game.mouse.isDown("right")) {
-          this.map.collisions[this.tileX][this.tileY] = 0;
-        }
-        break;
-      case MapEditorState.TYPES.object:
-        if (this.game.mouse.isDown("left")) {
-          this.map.objects[this.tileX][this.tileY] = this.selected;
-        }
-        break;
+    if (this.game.mouse.y > 40) {
+      this.tileX = Math.floor((this.game.mouse.x + this.cam.x) / this.tileDrawSize);
+      this.tileY = Math.floor((this.game.mouse.y + this.cam.y) / this.tileDrawSize);
+      if (this.tileX < 0) { return; }
+      if (this.tileX >= this.map.w) { return; }
+      if (this.tileY < 0) { return; }
+      if (this.tileY >= this.map.h) { return; }
+      switch (this.selectionType) {
+        case MapEditorState.TYPES.tile:
+          if (this.game.mouse.isDown("left")) {
+            this.map.tiles[this.tileX][this.tileY] = this.selected;
+          }
+          break;
+        case MapEditorState.TYPES.collision:
+          if (this.game.mouse.isDown("left")) {
+            this.map.collisions[this.tileX][this.tileY] = 1;
+          } else if (this.game.mouse.isDown("right")) {
+            this.map.collisions[this.tileX][this.tileY] = 0;
+          }
+          break;
+        case MapEditorState.TYPES.object:
+          if (this.game.mouse.isDown("left")) {
+            this.map.objects[this.tileX][this.tileY] = this.selected;
+          }
+          if (this.game.mouse.isDown("right")) {
+            this.map.objects[this.tileX][this.tileY] = -1;
+          }
+          break;
+      }
     }
   };
   render(ctx) {
     // Background
-    ctx.fillStyle = "rgb(255,255,255)";
+    ctx.fillStyle = "rgb(0,0,0)";
     ctx.fillRect(0, 0, this.game.screenWidth, this.game.screenHeight);
     // Map
     let mapStartX = Math.floor(this.cam.x / this.tileDrawSize) - 1;
     let mapStartY = Math.floor(this.cam.y / this.tileDrawSize) - 1;
     let mapEndX = Math.floor((this.cam.x + this.cam.w) / this.tileDrawSize) + 1;
     let mapEndY = Math.floor((this.cam.y + this.cam.h) / this.tileDrawSize) + 1;
+    // Tiles
     for (let x = mapStartX; x <= mapEndX; x++) {
       for (let y = mapStartY; y <= mapEndY; y++) {
         if (x >= 0 && x < this.map.w && y >= 0 && y < this.map.h) {
+          ctx.fillStyle = "rgb(255,255,255)";
+          ctx.fillRect(
+            (x * this.tileDrawSize) - this.cam.x,
+            (y * this.tileDrawSize) - this.cam.y,
+            this.tileDrawSize,
+            this.tileDrawSize
+          );
           let image = this.tileImages[this.map.tiles[x][y]];
           ctx.drawImage(
             image,
@@ -138,6 +142,24 @@ class MapEditorState extends State {
         }
       }
     }
+    // Objects
+    for (let x = mapStartX; x <= mapEndX; x++) {
+      for (let y = mapStartY; y <= mapEndY; y++) {
+        if (x >= 0 && x < this.map.w && y >= 0 && y < this.map.h) {
+          if (this.map.objects[x][y] != -1) {
+            let image = this.objectImages[this.map.objects[x][y]];
+            ctx.drawImage(
+              image,
+              (x * this.tileDrawSize) - this.cam.x,
+              (y * this.tileDrawSize) - this.cam.y,
+              this.tileDrawSize,
+              this.tileDrawSize
+            );
+          }
+        }
+      }
+    }
+    // Collisions
     if (this.selectionType == MapEditorState.TYPES.collision) {
       for (let x = mapStartX; x <= mapEndX; x++) {
         for (let y = mapStartY; y <= mapEndY; y++) {
@@ -154,8 +176,6 @@ class MapEditorState extends State {
           }
         }
       }
-    } else if (this.selectionType == MapEditorState.TYPES.object) {
-
     }
     // Hovered Tile
     ctx.beginPath();
@@ -171,9 +191,8 @@ class MapEditorState extends State {
     // Buttons
     ctx.fillStyle = "rgb(0,0,0)";
     ctx.fillRect(32, 0, this.game.screenWidth - 64, 32);
-    this.menuButton.render(ctx);
-    this.tilesButton.render(ctx);
-    this.collisionButton.render(ctx);
-    this.objectsButton.render(ctx);
+    for (let i = 0; i < this.buttons.length; i++) {
+      this.buttons[i].render(ctx);
+    }
   };
 };

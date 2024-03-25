@@ -1,14 +1,14 @@
 'use strict';
 
-class TileSelectState extends State {
+class ObjectSelectState extends State {
   constructor(game) {
     super(game);
     // Assets
-    this.tileSheet = this.game.gfx.tiles.fullImage;
-    this.tileSize = 32;
-    // Tiles
-    this.tileStartX = (this.game.screenWidth * 0.5) - (this.tileSheet.width * 0.5);
-    this.tileStartY = 128;
+    this.objectSheet = this.game.gfx.objects.fullImage;
+    this.objectSize = 32;
+    // Objects
+    this.objectStartX = (this.game.screenWidth * 0.5) - (this.objectSheet.width * 0.5);
+    this.objectStartY = 128;
     this.selectedTile = -1;
     this.selectedX = 0;
     this.selectedY = 0;
@@ -27,17 +27,17 @@ class TileSelectState extends State {
     // User Input
     let mx = this.game.mouse.x;
     let my = this.game.mouse.y;
-    if (mx >= this.tileStartX &&
-        mx <= this.tileStartX + this.tileSheet.width &&
-        my >= this.tileStartY &&
-        my <= this.tileStartY + this.tileSheet.height) {
-      this.selectedX = Math.max(0, Math.min(Math.floor(this.tileSheet.width / this.tileSize) - 1,
-        Math.floor((mx - this.tileStartX) / this.tileSize)
+    if (mx >= this.objectStartX &&
+        mx <= this.objectStartX + this.objectSheet.width &&
+        my >= this.objectStartY &&
+        my <= this.objectStartY + this.objectSheet.height) {
+      this.selectedX = Math.max(0, Math.min(Math.floor(this.objectSheet.width / this.objectSize) - 1,
+        Math.floor((mx - this.objectStartX) / this.objectSize)
       ));
-      this.selectedY = Math.max(0, Math.min(Math.floor(this.tileSheet.height / this.tileSize) - 1,
-        Math.floor((my - this.tileStartY) / this.tileSize)
+      this.selectedY = Math.max(0, Math.min(Math.floor(this.objectSheet.height / this.objectSize) - 1,
+        Math.floor((my - this.objectStartY) / this.objectSize)
       ));
-      this.selectedTile = (this.selectedY * Math.floor(this.tileSheet.width / this.tileSize)) + this.selectedX;
+      this.selectedTile = (this.selectedY * Math.floor(this.objectSheet.width / this.objectSize)) + this.selectedX;
       if (this.game.mouse.isUp("left")) {
         this.parent.selected = this.selectedTile;
         this.leave();
@@ -62,31 +62,31 @@ class TileSelectState extends State {
     );
     // Buttons
     this.backButton.render(ctx);
-    // Tiles
+    // Objects
     let left = 
     ctx.fillStyle = "rgb(255,255,255)";
     ctx.fillRect(
-      this.tileStartX,
-      this.tileStartY,
-      this.tileSheet.width,
-      this.tileSheet.height
+      this.objectStartX,
+      this.objectStartY,
+      this.objectSheet.width,
+      this.objectSheet.height
     );
     ctx.drawImage(
-      this.tileSheet,
-      this.tileStartX,
-      this.tileStartY,
-      this.tileSheet.width,
-      this.tileSheet.height
+      this.objectSheet,
+      this.objectStartX,
+      this.objectStartY,
+      this.objectSheet.width,
+      this.objectSheet.height
     );
     // Hover Tile
     ctx.beginPath();
     ctx.lineWidth = "3";
     ctx.strokeStyle = "rgb(0,255,255)";
     ctx.rect(
-      this.tileStartX + (this.selectedX * this.tileSize),
-      this.tileStartY + (this.selectedY * this.tileSize),
-      this.tileSize,
-      this.tileSize
+      this.objectStartX + (this.selectedX * this.objectSize),
+      this.objectStartY + (this.selectedY * this.objectSize),
+      this.objectSize,
+      this.objectSize
     );
     ctx.stroke();
   };

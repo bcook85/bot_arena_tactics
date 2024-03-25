@@ -43,20 +43,24 @@ class Map {
     for (let x = 0; x < this.w; x++) {
       let tiles = [];
       let collisions = [];
-      let objects = [];
       for (let y = 0; y < this.h; y++) {
         tiles.push(data.tiles[x][y]);
         collisions.push(data.collisions[x][y]);
-        objects.push(data.objects[x][y]);
+        if (data.objects[x][y] != -1) {
+          this.objects.push({
+            "id": data.objects[x][y],
+            "x": x + 0.5,
+            "y": y + 0.5
+          });
+        }
       }
       this.tiles.push(tiles);
       this.collisions.push(collisions);
-      this.objects.push(objects);
     }
   };
   getTile(x, y) {
     if (x < 0 || y < 0 || x >= this.w || y >= this.h) {
-      return -1;
+      return undefined;
     }
     return this.tiles[Math.floor(x)][Math.floor(y)];
   };
@@ -91,18 +95,18 @@ class Map {
     }
     return mapCanvas;
   };
-  getMapImageShadow(tileSize, blockColor, emptyColor) {
+  static getMapImageShadow(tileSize, mapData, blockColor, emptyColor) {
     let mapCanvas = document.createElement("canvas");
-    mapCanvas.width = this.w * tileSize;
-    mapCanvas.height = this.h * tileSize;
+    mapCanvas.width = mapData.w * tileSize;
+    mapCanvas.height = mapData.h * tileSize;
     let ctx = mapCanvas.getContext("2d");
     ctx.imageSmoothingEnabled = false;
     ctx.fillStyle = emptyColor;
     ctx.fillRect(0, 0, mapCanvas.width, mapCanvas.height);
     ctx.fillStyle = blockColor;
-    for (let x = 0; x < this.w; x++) {
-      for (let y = 0; y < this.h; y++) {
-        if (this.collisions[x][y] == 1) {
+    for (let x = 0; x < mapData.w; x++) {
+      for (let y = 0; y < mapData.h; y++) {
+        if (mapData.collisions[x][y] == 1) {
           ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
         }
       }

@@ -7,7 +7,7 @@ class TrainSetupState extends State {
       "Back",
       "bold 18px Monospace",
       96,
-      this.game.screenHeight - 48,
+      this.game.screenHeight - 32,
       128,
       24
     );
@@ -15,7 +15,7 @@ class TrainSetupState extends State {
       "Play",
       "bold 18px Monospace",
       this.game.screenWidth - 96,
-      this.game.screenHeight - 48,
+      this.game.screenHeight - 32,
       128,
       24
     );
@@ -34,14 +34,14 @@ class TrainSetupState extends State {
   render(ctx) {
     ctx.fillStyle = "rgb(0,0,0)";
     ctx.fillRect(0, 0, this.game.screenWidth, this.game.screenHeight);
-    ctx.font = "64px Monospace";
+    ctx.font = "bold 32px Monospace";
     ctx.fillStyle = "rgb(255,0,0)";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(
-      "Train Setup State"
+      "Training Setup"
       ,Math.floor(this.game.screenWidth * 0.5)
-      ,Math.floor(this.game.screenHeight * 0.5)
+      ,32
     );
     // Buttons
     this.backButton.render(ctx);

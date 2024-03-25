@@ -61,7 +61,7 @@ class MapEditorNewState extends State {
       let newMap = new Map();
       newMap.create(this.width, this.height);
       MAPS.push(newMap);
-      this.game.playerData.mapEditorSelectedMap = MAPS.length - 1;
+      this.game.playerData.selectedMap = MAPS.length - 1;
       new MapEditorState(this.game).enter();
     }
     this.widthDownButton.update(this.game.mouse);
@@ -84,14 +84,14 @@ class MapEditorNewState extends State {
   render(ctx) {
     ctx.fillStyle = "rgb(0,0,0)";
     ctx.fillRect(0, 0, this.game.screenWidth, this.game.screenHeight);
-    ctx.font = "Bold 48px Monospace";
+    ctx.font = "Bold 32px Monospace";
     ctx.fillStyle = "rgb(255,0,0)";
     ctx.textAlign = "center";
-    ctx.textBaseline = "top";
+    ctx.textBaseline = "middle";
     ctx.fillText(
       "Create New Map"
       ,Math.floor(this.game.screenWidth * 0.5)
-      ,16
+      ,32
     );
     // Selection Headers
     ctx.fillStyle = "rgb(255,0,0)";

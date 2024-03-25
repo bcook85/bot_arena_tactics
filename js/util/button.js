@@ -30,7 +30,7 @@ class Button {
     }
   };
   render(ctx) {
-    ctx.fillStyle = this.isHover ? this.defaultColor : this.hoverColor;
+    ctx.fillStyle = this.isHover ? this.hoverColor : this.defaultColor;
     ctx.font = this.font;
     ctx.textAlign = this.textAlign;
     ctx.textBaseline = this.textBaseLine;

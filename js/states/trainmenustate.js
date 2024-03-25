@@ -42,14 +42,14 @@ class TrainMenuState extends State {
     // Background Image
     ctx.fillStyle = "rgb(0,0,0)";
     ctx.fillRect(0, 0, this.game.screenWidth, this.game.screenHeight);
-    ctx.font = "Bold 48px Monospace";
+    ctx.font = "Bold 32px Monospace";
     ctx.fillStyle = "rgb(255,0,0)";
     ctx.textAlign = "center";
-    ctx.textBaseline = "top";
+    ctx.textBaseline = "middle";
     ctx.fillText(
-      "- Training Paused -"
+      "Paused"
       ,Math.floor(this.game.screenWidth * 0.5)
-      ,0
+      ,32
     );
     // Buttons
     for (let i = 0; i < this.buttons.length; i++) {

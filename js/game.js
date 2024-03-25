@@ -10,23 +10,22 @@ class Game {
     this.assets = new AssetContainer();
     this.gfx = {
       "mainmenu": this.assets.loadImage("gfx/mainmenu.png"),
-      "tiles": this.assets.loadImage("gfx/tiles.png")
+      "tiles": this.assets.loadImage("gfx/tiles.png"),
+      "objects": this.assets.loadImage("gfx/objects.png")
     };
     // Init Sound Effects
     this.sfx = {};
     // Player Data
     this.playerData = {
-      "mapEditorSelectedMap": 0,
-      "mapEditorSelectedTile": -1,
-      "mapEditorSelectedObject": -1,
-      "playSelectedMap": 0
+      "selectedMap": 0,
+      "selectedTeam": "red"
     };
     // Init Screen
     this.screen = new Screen(
       document.getElementById("gameScreen"),
       this.screenWidth,
       this.screenHeight,
-      1 // integer scale
+      1
     );
     // Init Input
     this.mouse = new MouseManager(this.screen.canvas);

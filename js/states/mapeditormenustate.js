@@ -27,7 +27,18 @@ class MapEditorMenuState extends State {
             this.leave();
             break;
           case "Save":
-            //new OptionState(this.game).enter();
+            let mapData = "const MAPS = " + JSON.stringify(MAPS) + ";"
+            let file = new Blob([mapData], {type: 'text/javascript'});
+            let a = document.createElement("a");
+            let url = URL.createObjectURL(file);
+            a.href = url;
+            a.download = "maps.js";
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(function() {
+              document.body.removeChild(a);
+              window.URL.revokeObjectURL(url);
+            }, 0);
             break;
           case "Quit":
             this.reset();
@@ -42,14 +53,14 @@ class MapEditorMenuState extends State {
     // Background Image
     ctx.fillStyle = "rgb(0,0,0)";
     ctx.fillRect(0, 0, this.game.screenWidth, this.game.screenHeight);
-    ctx.font = "Bold 48px Monospace";
+    ctx.font = "Bold 32px Monospace";
     ctx.fillStyle = "rgb(255,0,0)";
     ctx.textAlign = "center";
-    ctx.textBaseline = "top";
+    ctx.textBaseline = "middle";
     ctx.fillText(
-      "- Map Editor Menu -"
+      "Editor Menu"
       ,Math.floor(this.game.screenWidth * 0.5)
-      ,0
+      ,32
     );
     // Buttons
     for (let i = 0; i < this.buttons.length; i++) {

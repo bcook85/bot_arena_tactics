@@ -1,6 +1,6 @@
 'use strict';
 
-class ProjectorCamera {
+class Projector {
   constructor(width, height, fieldOfView, wallSprites) {
     // Camera Position in World
     this.x = 0;

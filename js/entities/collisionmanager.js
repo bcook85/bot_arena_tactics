@@ -35,13 +35,10 @@ class CollisionManager {
     let dist = e1.ppos.getDistance(e2.ppos);
     if (dist == 0.0) {
       let a = Math.random() * 2 * Math.PI;
-      let overlap = (e1.radius + e2.radius) * 0.5 * this.collisionScale;
+      let overlap = (e1.radius + e2.radius);
       e1.vel = Vector.fromAngle(a).normalize().mul(overlap);
       e1.ppos = e1.pos.add(e1.vel);
       this.resolveMap(e1);
-      e2.vel = Vector.fromAngle(a + Math.PI).normalize().mul(overlap);
-      e2.ppos = e2.pos.add(e2.vel);
-      this.resolveMap(e2);
       return;
     }
     if (dist < e1.radius + e2.radius) {
