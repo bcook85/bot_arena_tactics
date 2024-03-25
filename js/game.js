@@ -10,13 +10,15 @@ class Game {
     this.assets = new AssetContainer();
     this.gfx = {
       "mainmenu": this.assets.loadImage("gfx/mainmenu.png"),
-      "ui": this.assets.loadImage("gfx/ui.png")
+      "tiles": this.assets.loadImage("gfx/tiles.png")
     };
     // Init Sound Effects
     this.sfx = {};
     // Player Data
     this.playerData = {
       "mapEditorSelectedMap": 0,
+      "mapEditorSelectedTile": -1,
+      "mapEditorSelectedObject": -1,
       "playSelectedMap": 0
     };
     // Init Screen
@@ -24,7 +26,7 @@ class Game {
       document.getElementById("gameScreen"),
       this.screenWidth,
       this.screenHeight,
-      true
+      1 // integer scale
     );
     // Init Input
     this.mouse = new MouseManager(this.screen.canvas);

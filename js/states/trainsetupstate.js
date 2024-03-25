@@ -3,13 +3,31 @@
 class TrainSetupState extends State {
   constructor(game) {
     super(game);
+    this.backButton = new Button(
+      "Back",
+      "bold 18px Monospace",
+      96,
+      this.game.screenHeight - 48,
+      128,
+      24
+    );
+    this.playButton = new Button(
+      "Play",
+      "bold 18px Monospace",
+      this.game.screenWidth - 96,
+      this.game.screenHeight - 48,
+      128,
+      24
+    );
   };
   update(dt) {
     // User Input
-    if (this.game.keys.isUp("Escape")) {
+    this.backButton.update(this.game.mouse);
+    if (this.backButton.isClick) {
       this.leave();
     }
-    if (this.game.keys.isUp("Enter") || this.game.keys.isUp("f")) {
+    this.playButton.update(this.game.mouse);
+    if (this.playButton.isClick) {
       new TrainState(this.game).enter();
     }
   };
@@ -25,5 +43,8 @@ class TrainSetupState extends State {
       ,Math.floor(this.game.screenWidth * 0.5)
       ,Math.floor(this.game.screenHeight * 0.5)
     );
+    // Buttons
+    this.backButton.render(ctx);
+    this.playButton.render(ctx);
   };
 };

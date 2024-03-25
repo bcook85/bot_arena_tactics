@@ -8,21 +8,40 @@
 class MapEditorSetupState extends State {
   constructor(game) {
     super(game);
-    this.sectionSelected = 0;
     this.selectedMap = 0;
+    this.backButton = new Button(
+      "Back",
+      "bold 18px Monospace",
+      96,
+      this.game.screenHeight - 48,
+      128,
+      24
+    );
+    this.nextButton = new Button(
+      "Next",
+      "bold 18px Monospace",
+      this.game.screenWidth - 96,
+      this.game.screenHeight - 48,
+      128,
+      24
+    );
   };
   enter() {
     super.enter();
     if (MAPS.length == 0) {
+      this.leave();
       new MapEditorNewState(this.game).enter();
     }
   };
   update(dt) {
     // User Input
-    if (this.game.keys.isUp("Escape")) {
+    this.backButton.update(this.game.mouse);
+    if (this.backButton.isClick) {
       this.leave();
     }
-    if (this.game.keys.isUp("Enter") || this.game.keys.isUp("f")) {
+    this.nextButton.update(this.game.mouse);
+    if (this.nextButton.isClick) {
+      this.game.playerData.mapEditorSelectedMap = this.selectedMap;
       new MapEditorState(this.game).enter();
     }
   };
@@ -38,5 +57,8 @@ class MapEditorSetupState extends State {
       ,Math.floor(this.game.screenWidth * 0.5)
       ,Math.floor(this.game.screenHeight * 0.5)
     );
+    // Buttons
+    this.backButton.render(ctx);
+    this.nextButton.render(ctx);
   };
 };

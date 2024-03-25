@@ -7,7 +7,7 @@ class State {
   };
   enter() {
     if (this.game.states.length > 1) {
-      this.parent = this.game.states[-1];
+      this.parent = this.game.states[this.game.states.length - 1];
     }
     this.game.keys.reset();
     this.game.mouse.reset();

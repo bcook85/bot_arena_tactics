@@ -1,26 +1,37 @@
 'use strict';
 
-class MapEditorState extends State {
+class HelpState extends State {
   constructor(game) {
     super(game);
+    this.backButton = new Button(
+      "Back",
+      "16px Monospace",
+      this.game.screenWidth - 48,
+      32,
+      72,
+      24
+    );
   };
   update(dt) {
     // User Input
-    if (this.game.keys.isUp("Escape")) {
-      new MapEditorMenuState(this.game).enter();
+    this.backButton.update(this.game.mouse);
+    if (this.backButton.isClick) {
+      this.leave();
     }
   };
   render(ctx) {
     ctx.fillStyle = "rgb(0,0,0)";
     ctx.fillRect(0, 0, this.game.screenWidth, this.game.screenHeight);
-    ctx.font = "32px Monospace";
+    ctx.font = "64px Monospace";
     ctx.fillStyle = "rgb(255,0,0)";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(
-      "Map Editor State"
+      "Help State"
       ,Math.floor(this.game.screenWidth * 0.5)
       ,Math.floor(this.game.screenHeight * 0.5)
     );
+    // Buttons
+    this.backButton.render(ctx);
   };
 };

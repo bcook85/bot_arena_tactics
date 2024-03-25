@@ -1,13 +1,22 @@
 'use strict';
 
-class TrainState extends State {
+class PlayState extends State {
   constructor(game) {
     super(game);
+    this.menuButton = new Button(
+      "Menu",
+      "16px Monospace",
+      this.game.screenWidth - 48,
+      32,
+      72,
+      24
+    );
   };
   update(dt) {
     // User Input
-    if (this.game.keys.isUp("Escape")) {
-      new TrainMenuState(this.game).enter();
+    this.menuButton.update(this.game.mouse);
+    if (this.menuButton.isClick) {
+      new PlayMenuState(this.game).enter();
     }
   };
   render(ctx) {
@@ -18,9 +27,10 @@ class TrainState extends State {
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(
-      "Train State"
+      "Play State"
       ,Math.floor(this.game.screenWidth * 0.5)
       ,Math.floor(this.game.screenHeight * 0.5)
     );
+    this.menuButton.render(ctx);
   };
 };
