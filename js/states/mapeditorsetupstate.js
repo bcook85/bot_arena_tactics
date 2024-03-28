@@ -1,22 +1,17 @@
 'use strict';
 
-/*
- allows for selecting from existing maps to edit
- or create a new map with size options
-*/
-
 class MapEditorSetupState extends State {
   constructor(game) {
     super(game);
     this.tileImages = this.game.gfx.tiles.toList(32, 32);
     this.mapImages = [];
     for (let i = 0; i < MAPS.length; i++) {
-      this.mapImages.push(Map.getMapImageShadow(4, MAPS[i], "rgb(255,0,0)", "rgb(63,0,0)"));
+      this.mapImages.push(GameMap.getMapImageShadow(4, MAPS[i], "rgb(255,0,0)", "rgb(63,0,0)"));
     }
     this.selectedMap = this.game.playerData.selectedMap;
     this.backButton = new Button(
       "Back",
-      "bold 18px Monospace",
+      this.game.fonts.button,
       96,
       this.game.screenHeight - 32,
       128,
@@ -24,7 +19,7 @@ class MapEditorSetupState extends State {
     );
     this.nextButton = new Button(
       "Select",
-      "bold 18px Monospace",
+      this.game.fonts.button,
       this.game.screenWidth * 0.5,
       this.game.screenHeight - 32,
       128,
@@ -32,7 +27,7 @@ class MapEditorSetupState extends State {
     );
     this.newMapButton = new Button(
       "New Map",
-      "bold 18px Monospace",
+      this.game.fonts.button,
       this.game.screenWidth - 96,
       this.game.screenHeight - 32,
       128,
@@ -40,7 +35,7 @@ class MapEditorSetupState extends State {
     );
     this.mapDownButton = new Button(
       "<",
-      "bold 32px Monospace",
+      this.game.fonts.button,
       (this.game.screenWidth * 0.5) - 192,
       this.game.screenHeight * 0.5,
       48,
@@ -48,7 +43,7 @@ class MapEditorSetupState extends State {
     );
     this.mapUpButton = new Button(
       ">",
-      "bold 32px Monospace",
+      this.game.fonts.button,
       (this.game.screenWidth * 0.5) + 192,
       this.game.screenHeight * 0.5,
       48,
@@ -93,10 +88,12 @@ class MapEditorSetupState extends State {
     }
   };
   render(ctx) {
-    ctx.fillStyle = "rgb(0,0,0)";
+    // Background
+    ctx.fillStyle = this.game.colors.menuBackground;
     ctx.fillRect(0, 0, this.game.screenWidth, this.game.screenHeight);
-    ctx.font = "bold 32px Monospace";
-    ctx.fillStyle = "rgb(255,0,0)";
+    // Header
+    ctx.font = this.game.fonts.header;
+    ctx.fillStyle = this.game.colors.header;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(

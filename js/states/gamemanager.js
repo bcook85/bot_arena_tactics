@@ -4,97 +4,21 @@ class GameManager {
   constructor(mapID) {
     // Map
     this.mapID = mapID;
-    this.map = new Map();
+    this.map = new GameMap();
     this.map.load(MAPS[this.mapID]);
-    let redPlayerSpawn = {};
-    let redHeart = {};
-    let redDroneSpawns = [];
-    let redDroneStations = [];
-    let bluePlayerSpawn = {};
-    let blueHeart = {};
-    let blueDroneSpawns = [];
-    let blueDroneStations = [];
-    for (let i = 0; i < this.map.objects.length; i++) {
-      switch (this.map.objects[i].id) {
-        case 0:
-          // Red Drone Station
-          redDroneStations.push({
-            "x": this.map.objects[i].x,
-            "y": this.map.objects[i].y
-          });
-          break;
-        case 1:
-          // Blue Drone Station
-          blueDroneStations.push({
-            "x": this.map.objects[i].x,
-            "y": this.map.objects[i].y
-          });
-          break;
-        case 2:
-          // Unclaimed Turret
-          break;
-        case 3:
-          // Red Team Turret
-          break;
-        case 4:
-          // Red Team Heart
-          redHeart = {
-            "x": this.map.objects[i].x,
-            "y": this.map.objects[i].y
-          };
-          break;
-        case 5:
-          // Blue Team Heart
-          blueHeart = {
-            "x": this.map.objects[i].x,
-            "y": this.map.objects[i].y
-          };
-          break;
-        case 6:
-          // Blue Team Turret
-          break;
-        case 7:
-          // Nothing
-          break;
-        case 8:
-          // Red Player Spawn
-          redPlayerSpawn = {
-            "x": this.map.objects[i].x,
-            "y": this.map.objects[i].y
-          };
-          break;
-        case 9:
-          // Blue Player Spawn
-          bluePlayerSpawn = {
-            "x": this.map.objects[i].x,
-            "y": this.map.objects[i].y
-          };
-          break;
-        case 10:
-          // Nothing
-          break;
-        case 11:
-          // Nothing
-          break;
-        case 12:
-          // Red Drone Spawn
-          redDroneSpawns.push({
-            "x": this.map.objects[i].x,
-            "y": this.map.objects[i].y
-          });
-          break;
-        case 13:
-          // Blue Drone Spawn
-          blueDroneSpawns.push({
-            "x": this.map.objects[i].x,
-            "y": this.map.objects[i].y
-          });
-          break;
-      }
-    }
     // Teams
-    this.redTeam = new Team(redPlayerSpawn, redHeart, redDroneSpawns, redDroneStations);
-    this.blueTeam = new Team(bluePlayerSpawn, blueHeart, blueDroneSpawns, blueDroneStations);
+    this.redTeam = new Team(
+      this.map.redTeam.playerSpawn,
+      this.map.redTeam.heartSpawn,
+      this.map.redTeam.droneSpawns,
+      this.map.redTeam.stationSpawns
+    );
+    this.blueTeam = new Team(
+      this.map.blueTeam.playerSpawn,
+      this.map.blueTeam.heartSpawn,
+      this.map.blueTeam.droneSpawns,
+      this.map.blueTeam.stationSpawns
+    );
     // Game Objects
     this.turrets = [];
     this.gameTimer = 0;
@@ -112,6 +36,7 @@ class GameManager {
     }
   };
   update(dt, player1Input, player2Input) {
+    this.collisionManager.reset();
     // Handle Player 1 Input
     this.redTeam.player.move.x = player1Input.move;
     this.redTeam.player.move.y = player1Input.strafe;
@@ -123,22 +48,33 @@ class GameManager {
 
     // Update Timers
 
-    // Update Teams
+    // Update Red
     this.redTeam.update(dt, this.blueTeam, this.turrets, this.map);
     this.collisionManager.addEntity(this.redTeam.player);
     for (let i = 0; i < this.redTeam.drones.length; i++) {
       if (this.redTeam.drones[i].alive) {
-        this.collisionManager.addEntity(this.redTeam.drones);
+        this.collisionManager.addEntity(this.redTeam.drones[i]);
       }
     }
+    for (let i = 0; i < this.redTeam.stations.length; i++) {
+      this.collisionManager.addEntity(this.redTeam.stations[i]);
+    }
+    this.collisionManager.addEntity(this.redTeam.heart);
+
+    // Update Blue
     this.blueTeam.update(dt, this.redTeam, this.turrets, this.map);
     this.collisionManager.addEntity(this.blueTeam.player);
     for (let i = 0; i < this.blueTeam.drones.length; i++) {
       if (this.blueTeam.drones[i].alive) {
-        this.collisionManager.addEntity(this.blueTeam.drones);
+        this.collisionManager.addEntity(this.blueTeam.drones[i]);
       }
     }
+    for (let i = 0; i < this.blueTeam.stations.length; i++) {
+      this.collisionManager.addEntity(this.blueTeam.stations[i]);
+    }
+    this.collisionManager.addEntity(this.blueTeam.heart);
+    
+    // Calculate
     this.collisionManager.update();
-    this.collisionManager.reset();
   };
 };

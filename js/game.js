@@ -9,12 +9,34 @@ class Game {
     // Init Graphics
     this.assets = new AssetContainer();
     this.gfx = {
-      "mainmenu": this.assets.loadImage("gfx/mainmenu.png"),
-      "tiles": this.assets.loadImage("gfx/tiles.png"),
-      "objects": this.assets.loadImage("gfx/objects.png")
+      "tiles": this.assets.loadImage("gfx/sprites_tiles.png"),
+      "objects": this.assets.loadImage("gfx/sprites_objects.png"),
+      "entities": this.assets.loadImage("gfx/sprites_entities.png")
     };
     // Init Sound Effects
     this.sfx = {};
+    // Standard Color Definitions
+    this.colors = {
+      "red": "rgb(255,0,0)",
+      "green": "rgb(0,255,0)",
+      "blue": "rgb(0,0,255)",
+      "black": "rgb(0,0,0)",
+      "white": "rgb(255,255,255)",
+      "menuBackground": "rgb(0,0,0)",
+      "textNormal": "rgb(255,255,255)",
+      "textHighlight": "rgb(0,255,255)",
+      "header": "rgb(255,255,255)"
+    };
+    // Standard Font Definitions
+    this.fonts = {
+      "title1": "bold 96px Monospace",
+      "title2": "bold 72px Monospace",
+      "small": "12px Monospace",
+      "medium": "18px Monospace",
+      "large": "32px Monospace",
+      "header": "bold 32px Monospace",
+      "button": "bold 18px Monospace"
+    };
     // Player Data
     this.playerData = {
       "selectedMap": 0,
@@ -39,7 +61,7 @@ class Game {
     this.fpsFrame = 0;
     this.fpsTime = 0;
     this.frameTime = 1000 / 60;
-    this.maxDelta = 1000 / 30;
+    this.maxDelta = 1000 / 15;
     // States
     this.states = [];
   };

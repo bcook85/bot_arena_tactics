@@ -9,7 +9,7 @@ class MapEditorMenuState extends State {
     for (let i = 0; i < this.items.length; i++) {
       this.buttons.push(new Button(
         this.items[i],
-        "bold 18px Monospace",
+        this.game.fonts.button,
         Math.floor(this.game.screenWidth * 0.5),
         Math.floor(this.game.screenHeight * 0.5) + (i * 26) + 32,
         192,
@@ -50,11 +50,12 @@ class MapEditorMenuState extends State {
     }
   };
   render(ctx) {
-    // Background Image
-    ctx.fillStyle = "rgb(0,0,0)";
+    // Background
+    ctx.fillStyle = this.game.colors.menuBackground;
     ctx.fillRect(0, 0, this.game.screenWidth, this.game.screenHeight);
-    ctx.font = "Bold 32px Monospace";
-    ctx.fillStyle = "rgb(255,0,0)";
+    // Header
+    ctx.font = this.game.fonts.header;
+    ctx.fillStyle = this.game.colors.header;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(

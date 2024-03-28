@@ -3,15 +3,13 @@
 class MainState extends State {
   constructor(game) {
     super(game);
-    // Assets
-    this.backgroundImage = this.game.gfx.mainmenu.fullImage;
     // Menu Items
     this.items = ["Play", "Map Editor", "Train", "Options", "Help"];
     this.buttons = [];
     for (let i = 0; i < this.items.length; i++) {
       this.buttons.push(new Button(
         this.items[i],
-        "bold 18px Monospace",
+        this.game.fonts.button,
         Math.floor(this.game.screenWidth * 0.5),
         Math.floor(this.game.screenHeight * 0.5) + (i * 26) + 32,
         192,
@@ -47,13 +45,28 @@ class MainState extends State {
     }
   };
   render(ctx) {
-    // Background Image
-    ctx.drawImage(
-      this.backgroundImage,
-      0,
-      0,
-      this.game.screenWidth,
-      this.game.screenHeight
+    // Background
+    ctx.fillStyle = this.game.colors.menuBackground;
+    ctx.fillRect(0, 0, this.game.screenWidth, this.game.screenHeight);
+    // Title 1
+    ctx.font = this.game.fonts.title1;
+    ctx.fillStyle = this.game.colors.red;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(
+      "Bot Arena"
+      ,Math.floor(this.game.screenWidth * 0.5)
+      ,48
+    );
+    // Title 2
+    ctx.font = this.game.fonts.title2;
+    ctx.fillStyle = this.game.colors.blue;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(
+      "TACTICS"
+      ,Math.floor(this.game.screenWidth * 0.5)
+      ,128
     );
     // Buttons
     for (let i = 0; i < this.buttons.length; i++) {

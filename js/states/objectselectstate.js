@@ -8,14 +8,14 @@ class ObjectSelectState extends State {
     this.objectSize = 32;
     // Objects
     this.objectStartX = (this.game.screenWidth * 0.5) - (this.objectSheet.width * 0.5);
-    this.objectStartY = 128;
+    this.objectStartY = (this.game.screenHeight * 0.5) - (this.objectSheet.height * 0.5);
     this.selectedTile = -1;
     this.selectedX = 0;
     this.selectedY = 0;
     // Buttons
     this.backButton = new Button(
       "Back",
-      "16px Monospace",
+      this.game.fonts.button,
       this.game.screenWidth * 0.5,
       this.game.screenHeight - 32,
       72,
@@ -49,14 +49,16 @@ class ObjectSelectState extends State {
     }
   };
   render(ctx) {
-    ctx.fillStyle = "rgb(0,0,0)";
+    // Background
+    ctx.fillStyle = this.game.colors.menuBackground;
     ctx.fillRect(0, 0, this.game.screenWidth, this.game.screenHeight);
-    ctx.font = "bold 32px Monospace";
-    ctx.fillStyle = "rgb(255,0,0)";
+    // Header
+    ctx.font = this.game.fonts.header;
+    ctx.fillStyle = this.game.colors.header;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(
-      "Tile Select"
+      "Object Select"
       ,Math.floor(this.game.screenWidth * 0.5)
       ,32
     );
@@ -64,7 +66,7 @@ class ObjectSelectState extends State {
     this.backButton.render(ctx);
     // Objects
     let left = 
-    ctx.fillStyle = "rgb(255,255,255)";
+    ctx.fillStyle = this.game.colors.white;
     ctx.fillRect(
       this.objectStartX,
       this.objectStartY,
@@ -81,7 +83,7 @@ class ObjectSelectState extends State {
     // Hover Tile
     ctx.beginPath();
     ctx.lineWidth = "3";
-    ctx.strokeStyle = "rgb(0,255,255)";
+    ctx.strokeStyle = this.game.colors.textHighlight;
     ctx.rect(
       this.objectStartX + (this.selectedX * this.objectSize),
       this.objectStartY + (this.selectedY * this.objectSize),

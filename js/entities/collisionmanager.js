@@ -4,7 +4,7 @@ class CollisionManager {
   constructor(mapWidth, mapHeight, getCollision) {
     this.entities = [];
     this.getCollision = getCollision;
-    this.collisionScale = 1 / 4;
+    this.collisionScale = 1;
     this.mapWidth = mapWidth;
     this.mapHeight = mapHeight;
     this.quadTree = new QuadTree(0, 0, this.mapWidth, this.mapHeight);
@@ -20,8 +20,9 @@ class CollisionManager {
   update() {
     for (let i = 0; i < this.entities.length; i++) {
       let e1 = this.entities[i];
+      // if too fast, need to repeat the below for each segment
       this.resolveMap(e1);
-      let nearList = this.quadTree.query(e1.pos.x, e1.pos.y, e1.radius, []);
+      let nearList = this.quadTree.query(e1.pos.x, e1.pos.y, 0, []);
       for (let j = 0; j < nearList.length; j++) {
         let index = nearList[j];
         if (i != index) {
@@ -32,18 +33,10 @@ class CollisionManager {
     }
   };
   resolveEntity(e1, e2) {
-    let dist = e1.ppos.getDistance(e2.ppos);
-    if (dist == 0.0) {
-      let a = Math.random() * 2 * Math.PI;
-      let overlap = (e1.radius + e2.radius);
-      e1.vel = Vector.fromAngle(a).normalize().mul(overlap);
-      e1.ppos = e1.pos.add(e1.vel);
-      this.resolveMap(e1);
-      return;
-    }
+    let dist = e1.ppos.getDistance(e2.pos);
     if (dist < e1.radius + e2.radius) {
-      let overlap = (dist - e1.radius - e2.radius) * this.collisionScale;
-      e1.ppos = e1.ppos.sub(e1.ppos.sub(e2.ppos).mul(overlap).div(dist));
+      let overlap = dist - e1.radius - e2.radius;
+      e1.ppos = e1.ppos.sub(e1.ppos.sub(e2.ppos).mul(overlap * this.collisionScale).div(dist));
       e1.vel = Vector.fromAngle(e1.pos.getAngle(e1.ppos)).normalize().mul(e1.pos.getDistance(e1.ppos));
       this.resolveMap(e1);
     }
@@ -75,7 +68,6 @@ class CollisionManager {
             }
           }
           e.vel = Vector.fromAngle(e.pos.getAngle(e.ppos)).normalize().mul(e.pos.getDistance(e.ppos));
-          //e.ppos = e.pos.add(e.vel); redundant, right?
         }
       }
     }

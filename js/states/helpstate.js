@@ -3,11 +3,12 @@
 class HelpState extends State {
   constructor(game) {
     super(game);
+    // Buttons
     this.backButton = new Button(
       "Back",
-      "16px Monospace",
-      this.game.screenWidth - 48,
-      32,
+      this.game.fonts.button,
+      this.game.screenWidth * 0.5,
+      this.game.screenHeight - 32,
       72,
       24
     );
@@ -20,16 +21,18 @@ class HelpState extends State {
     }
   };
   render(ctx) {
-    ctx.fillStyle = "rgb(0,0,0)";
+    // Background
+    ctx.fillStyle = this.game.colors.menuBackground;
     ctx.fillRect(0, 0, this.game.screenWidth, this.game.screenHeight);
-    ctx.font = "64px Monospace";
-    ctx.fillStyle = "rgb(255,0,0)";
+    // Header
+    ctx.font = this.game.fonts.header;
+    ctx.fillStyle = this.game.colors.header;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(
-      "Help State"
+      "Game Help"
       ,Math.floor(this.game.screenWidth * 0.5)
-      ,Math.floor(this.game.screenHeight * 0.5)
+      ,32
     );
     // Buttons
     this.backButton.render(ctx);

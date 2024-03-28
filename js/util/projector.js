@@ -1,6 +1,7 @@
 'use strict';
 
 class Projector {
+  static twoPI = Math.PI * 2;
   constructor(width, height, fieldOfView, wallSprites) {
     // Camera Position in World
     this.x = 0;
@@ -16,8 +17,8 @@ class Projector {
     this.halfFov = this.fov * 0.5;
     this.wallHeight = Math.abs(Math.floor(this.halfWidth / Math.tan(this.halfFov)));
     this.wallHeightHalf = this.wallHeight * 0.5;
-    this.viewDistance = 128;
-    this.shadowScale = 1.75;// distance affects brightness
+    this.viewDistance = 32;
+    this.shadowScale = 0.75;// distance affects brightness
     // Drawable Objects
     this.wallSprites = wallSprites;
     this.walls = [];
@@ -61,10 +62,10 @@ class Projector {
       let x = this.x;
       let y = this.y;
       let ia = (this.a - this.halfFov) + (i / this.width * this.fov);
-      if (ia > Math.PI * 2) {
-        ia -= Math.PI * 2;
+      if (ia > Projector.twoPI) {
+        ia -= Projector.twoPI;
       } else if (ia < 0) {
-        ia += Math.PI * 2;
+        ia += Projector.twoPI;
       }
       let vx = Math.cos(ia);
       let vy = Math.sin(ia);
@@ -155,28 +156,27 @@ class Projector {
   projectEntity(pos, sprite, drawSize, zLevel) {
     let camPos = new Vector(this.x, this.y);
     let angleToTarget = camPos.getAngle(pos);
-    let a1 = NormalizeAngle(this.a - this.halfFov);
-    let a2 = NormalizeAngle(this.a + this.halfFov);
+    let a1 = Projector.normalizeAngle(this.a - this.halfFov);
+    let a2 = Projector.normalizeAngle(this.a + this.halfFov);
     if (a2 < a1) {
-      a1 -= Math.PI * 2;
+      a1 -= Projector.twoPI;
     } else {
-      angleToTarget = NormalizeAngle(angleToTarget);
+      angleToTarget = Projector.normalizeAngle(angleToTarget);
     }
     if (angleToTarget >= a1 && angleToTarget <= a2) {
       let a = angleToTarget - this.a;
       let fac = Math.cos(a);
       let dist = camPos.getDistance(pos) * fac;
       if (dist <= this.viewDistance && dist >= 0.25) {
-        let size = this.wallHeight * drawSize / dist;
-        let bottom = this.halfHeight + (this.wallHeightHalf / dist);
+        let size = Math.floor(this.wallHeight * drawSize / dist);
+        let bottom = Math.floor(this.halfHeight + (this.wallHeightHalf / dist));
         let top = bottom - size - (zLevel * (this.wallHeight / dist));
-        let left = this.halfWidth + (Math.tan(a) * this.width) - (size * 0.5);
+        let left = Math.floor(this.halfWidth + (Math.tan(a) * this.wallHeight) - (size * 0.5));
         if (left < this.width && left + size >= 0) {
           let obj = {};
           obj.dist = dist;
           obj.left = left;
           obj.top = top;
-          obj.bottom = bottom;
           obj.size = size;
           obj.sprite = sprite;
           for (let i = 0; i < this.objects.length; i++) {
@@ -190,28 +190,37 @@ class Projector {
       }
     }
   };
-
   drawEntities(ctx) {
     for (let i = 0; i < this.objects.length; i++) {
       let obj = this.objects[i];
-      let left = Math.max(0, Math.ceil(obj.left));
+      let left = Math.max(0, obj.left);
       let right = Math.min(this.width, Math.floor(obj.left + obj.size - 1));
       for (let j = left; j < right; j++) {
         if (obj.dist < this.walls[j].distance) {
           ctx.drawImage(
             obj.sprite,
+            Math.floor((j - obj.left) / obj.size * obj.sprite.width),
             0,
-            0,
-            obj.sprite.width,
+            1,
             obj.sprite.height,
             j,
             obj.top,
             1,
-            obj.bottom - obj.top
+            obj.size
           );
         }
       }
     }
     this.objects = [];
+  };
+  static normalizeAngle(angle) {
+    let newAngle = angle;
+    while (newAngle < 0) {
+      newAngle += Projector.twoPI;
+    }
+    while(newAngle > Projector.twoPI) {
+      newAngle -= Projector.twoPI;
+    }
+    return newAngle;
   };
 };

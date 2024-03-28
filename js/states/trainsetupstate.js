@@ -3,17 +3,18 @@
 class TrainSetupState extends State {
   constructor(game) {
     super(game);
+    // Buttons
     this.backButton = new Button(
       "Back",
-      "bold 18px Monospace",
+      this.game.fonts.button,
       96,
       this.game.screenHeight - 32,
       128,
       24
     );
-    this.playButton = new Button(
-      "Play",
-      "bold 18px Monospace",
+    this.trainButton = new Button(
+      "Train",
+      this.game.fonts.button,
       this.game.screenWidth - 96,
       this.game.screenHeight - 32,
       128,
@@ -26,16 +27,18 @@ class TrainSetupState extends State {
     if (this.backButton.isClick) {
       this.leave();
     }
-    this.playButton.update(this.game.mouse);
-    if (this.playButton.isClick) {
+    this.trainButton.update(this.game.mouse);
+    if (this.trainButton.isClick) {
       new TrainState(this.game).enter();
     }
   };
   render(ctx) {
-    ctx.fillStyle = "rgb(0,0,0)";
+    // Background
+    ctx.fillStyle = this.game.colors.menuBackground;
     ctx.fillRect(0, 0, this.game.screenWidth, this.game.screenHeight);
-    ctx.font = "bold 32px Monospace";
-    ctx.fillStyle = "rgb(255,0,0)";
+    // Header
+    ctx.font = this.game.fonts.header;
+    ctx.fillStyle = this.game.colors.header;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(
@@ -45,6 +48,6 @@ class TrainSetupState extends State {
     );
     // Buttons
     this.backButton.render(ctx);
-    this.playButton.render(ctx);
+    this.trainButton.render(ctx);
   };
 };

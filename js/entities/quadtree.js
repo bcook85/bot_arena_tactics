@@ -23,9 +23,9 @@ class QuadTree {
   };
   intersects(x, y, r) {
     if (x + r < this.x) return false;
-    if (x - r >= this.x + this.width) return false;
+    if (x - r > this.x + this.width) return false;
     if (y + r < this.y) return false;
-    if (y - r >= this.y + this.height) return false;
+    if (y - r > this.y + this.height) return false;
     return true;
   };
   addEntity(x, y, i) {
@@ -58,8 +58,7 @@ class QuadTree {
     if (this.intersects(x, y, r)) {
       let pos = new Vector(x, y);
       for (let i = 0; i < this.entities.length; i++) {
-        let e = this.entities[i];
-        list.push(e[2]);
+        list.push(this.entities[i][2]);
       }
       if (this.divided) {
         list = this.nw.query(x, y, r, list);

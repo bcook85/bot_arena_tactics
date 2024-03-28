@@ -6,13 +6,13 @@ class PlaySetupState extends State {
     // Map Images
     this.mapImages = [];
     for (let i = 0; i < MAPS.length; i++) {
-      this.mapImages.push(Map.getMapImageShadow(4, MAPS[i], "rgb(255,0,0)", "rgb(63,0,0)"));
+      this.mapImages.push(GameMap.getMapImageShadow(4, MAPS[i], "rgb(255,0,0)", "rgb(63,0,0)"));
     }
     this.selectedMap = this.game.playerData.selectedMap;
     this.selectedTeam = this.game.playerData.selectedTeam;
     this.backButton = new Button(
       "Back",
-      "bold 18px Monospace",
+      this.game.fonts.button,
       96,
       this.game.screenHeight - 32,
       128,
@@ -20,7 +20,7 @@ class PlaySetupState extends State {
     );
     this.playButton = new Button(
       "Play",
-      "bold 18px Monospace",
+      this.game.fonts.button,
       this.game.screenWidth - 96,
       this.game.screenHeight - 32,
       128,
@@ -28,7 +28,7 @@ class PlaySetupState extends State {
     );
     this.mapDownButton = new Button(
       "<",
-      "bold 32px Monospace",
+      this.game.fonts.button,
       32,
       this.game.screenHeight * 0.5,
       48,
@@ -36,7 +36,7 @@ class PlaySetupState extends State {
     );
     this.mapUpButton = new Button(
       ">",
-      "bold 32px Monospace",
+      this.game.fonts.button,
       288,
       this.game.screenHeight * 0.5,
       48,
@@ -44,7 +44,7 @@ class PlaySetupState extends State {
     );
     this.redTeamButton = new Button(
       "Red",
-      "bold 24px Monospace",
+      this.game.fonts.button,
       (this.game.screenWidth * 0.5) + 164,
       (this.game.screenHeight * 0.5) - 48,
       196,
@@ -53,7 +53,7 @@ class PlaySetupState extends State {
     this.redTeamButton.defaultColor = "rgb(255,0,0)";
     this.blueTeamButton = new Button(
       "Blue",
-      "bold 24px Monospace",
+      this.game.fonts.button,
       (this.game.screenWidth * 0.5) + 164,
       (this.game.screenHeight * 0.5) + 48,
       196,
@@ -97,10 +97,12 @@ class PlaySetupState extends State {
     }
   };
   render(ctx) {
-    ctx.fillStyle = "rgb(0,0,0)";
+    // Background
+    ctx.fillStyle = this.game.colors.menuBackground;
     ctx.fillRect(0, 0, this.game.screenWidth, this.game.screenHeight);
-    ctx.font = "bold 32px Monospace";
-    ctx.fillStyle = "rgb(255,0,0)";
+    // Header
+    ctx.font = this.game.fonts.header;
+    ctx.fillStyle = this.game.colors.header;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(
@@ -109,8 +111,8 @@ class PlaySetupState extends State {
       ,32
     );
     // Map
-    ctx.font = "bold 16px Monospace";
-    ctx.fillStyle = "rgb(255,0,0)";
+    ctx.font = this.game.fonts.medium;
+    ctx.fillStyle = this.game.colors.textNormal;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(
@@ -126,8 +128,8 @@ class PlaySetupState extends State {
       image.width,image.height
     );
     // Team
-    ctx.font = "bold 16px Monospace";
-    ctx.fillStyle = "rgb(255,0,0)";
+    ctx.font = this.game.fonts.medium;
+    ctx.fillStyle = this.game.colors.textNormal;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(
@@ -137,7 +139,7 @@ class PlaySetupState extends State {
     );
     ctx.beginPath();
     ctx.lineWidth = "3";
-    ctx.strokeStyle = "rgb(0,255,255)";
+    ctx.strokeStyle = this.game.colors.textHighlight;
     let pos = [this.redTeamButton.left - 4, this.redTeamButton.top - 4];
     if (this.selectedTeam == "blue") {
       pos = [this.blueTeamButton.left - 4, this.blueTeamButton.top - 4];

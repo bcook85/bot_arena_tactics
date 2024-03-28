@@ -13,39 +13,39 @@ class MapEditorNewState extends State {
     // Buttons
     this.backButton = new Button(
       "Back",
-      "bold 18px Monospace",
+      this.game.fonts.button,
       96,
       this.game.screenHeight - 48,
       128,24
     );
     this.nextButton = new Button(
       "Create",
-      "bold 18px Monospace",
+      this.game.fonts.button,
       this.game.screenWidth - 96,
       this.game.screenHeight - 48,
       128,24
     );
     this.widthDownButton = new Button(
       "<",
-      "24px Monospace",
+      this.game.fonts.button,
       Math.floor(this.game.screenWidth * 0.5) + 64,
       128,24,24
     );
     this.widthUpButton = new Button(
       ">",
-      "24px Monospace",
+      this.game.fonts.button,
       Math.floor(this.game.screenWidth * 0.5) + 128,
       128,24,24
     );
     this.heightDownButton = new Button(
       "<",
-      "24px Monospace",
+      this.game.fonts.button,
       Math.floor(this.game.screenWidth * 0.5) + 64,
       196,24,24
     );
     this.heightUpButton = new Button(
       ">",
-      "24px Monospace",
+      this.game.fonts.button,
       Math.floor(this.game.screenWidth * 0.5) + 128,
       196,24,24
     );
@@ -82,10 +82,12 @@ class MapEditorNewState extends State {
     }
   };
   render(ctx) {
-    ctx.fillStyle = "rgb(0,0,0)";
+    // Background
+    ctx.fillStyle = this.game.colors.menuBackground;
     ctx.fillRect(0, 0, this.game.screenWidth, this.game.screenHeight);
-    ctx.font = "Bold 32px Monospace";
-    ctx.fillStyle = "rgb(255,0,0)";
+    // Header
+    ctx.font = this.game.fonts.header;
+    ctx.fillStyle = this.game.colors.header;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(
@@ -94,10 +96,10 @@ class MapEditorNewState extends State {
       ,32
     );
     // Selection Headers
-    ctx.fillStyle = "rgb(255,0,0)";
+    ctx.fillStyle = this.game.colors.textNormal;
     ctx.textAlign = "right";
     ctx.textBaseline = "middle";
-    ctx.font = "Bold 20px Monospace";
+    ctx.font = this.game.fonts.medium;
     ctx.fillText(
       "Map Width:",
       Math.floor(this.game.screenWidth * 0.5) - 32,
@@ -110,7 +112,7 @@ class MapEditorNewState extends State {
     );
     // Selection Values
     ctx.textAlign = "center";
-    ctx.fillStyle = "rgb(0, 255, 255)";
+    ctx.fillStyle = this.game.colors.textNormal;
     ctx.fillText(
       this.width,
       Math.floor(this.game.screenWidth * 0.5) + 96,

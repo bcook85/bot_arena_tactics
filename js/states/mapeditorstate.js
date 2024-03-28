@@ -20,7 +20,7 @@ class MapEditorState extends State {
     for (let i = 0; i < this.items.length; i++) {
       this.buttons.push(new Button(
         this.items[i],
-        "16px Monospace",
+        this.game.fonts.button,
         128 + (128 * i),
         16,116,24
       ));
@@ -36,7 +36,7 @@ class MapEditorState extends State {
     this.camMaxX = this.mapMaxWidth - this.cam.w + this.tileDrawSize;
     this.camMinY = 0 - this.tileDrawSize;
     this.camMaxY = this.mapMaxHeight - this.cam.h + this.tileDrawSize;
-    this.camSpeed = 5.0;
+    this.camSpeed = 7.0;
     // Mouse
     this.tileX = 0;
     this.tileY = 0;
@@ -67,16 +67,16 @@ class MapEditorState extends State {
       }
     }
     // Keyboard Controls
-    if (this.game.keys.isDown("w")) {
+    if (this.game.keys.isDown("w") || this.game.keys.isDown("ArrowUp")) {
       this.cam.y = Math.max(this.camMinY, this.cam.y - this.camSpeed);
     }
-    if (this.game.keys.isDown("s")) {
+    if (this.game.keys.isDown("s") || this.game.keys.isDown("ArrowDown")) {
       this.cam.y = Math.min(this.camMaxY, this.cam.y + this.camSpeed);
     }
-    if (this.game.keys.isDown("a")) {
+    if (this.game.keys.isDown("a") || this.game.keys.isDown("ArrowLeft")) {
       this.cam.x = Math.max(this.camMinX, this.cam.x - this.camSpeed);
     }
-    if (this.game.keys.isDown("d")) {
+    if (this.game.keys.isDown("d") || this.game.keys.isDown("ArrowRight")) {
       this.cam.x = Math.min(this.camMaxX, this.cam.x + this.camSpeed);
     }
     // Mouse
@@ -113,7 +113,7 @@ class MapEditorState extends State {
   };
   render(ctx) {
     // Background
-    ctx.fillStyle = "rgb(0,0,0)";
+    ctx.fillStyle = this.game.colors.menuBackground;
     ctx.fillRect(0, 0, this.game.screenWidth, this.game.screenHeight);
     // Map
     let mapStartX = Math.floor(this.cam.x / this.tileDrawSize) - 1;
@@ -124,7 +124,7 @@ class MapEditorState extends State {
     for (let x = mapStartX; x <= mapEndX; x++) {
       for (let y = mapStartY; y <= mapEndY; y++) {
         if (x >= 0 && x < this.map.w && y >= 0 && y < this.map.h) {
-          ctx.fillStyle = "rgb(255,255,255)";
+          ctx.fillStyle = this.game.colors.white;
           ctx.fillRect(
             (x * this.tileDrawSize) - this.cam.x,
             (y * this.tileDrawSize) - this.cam.y,
@@ -180,7 +180,7 @@ class MapEditorState extends State {
     // Hovered Tile
     ctx.beginPath();
     ctx.lineWidth = "3";
-    ctx.strokeStyle = "rgb(0,255,255)";
+    ctx.strokeStyle = this.game.colors.textHighlight;
     ctx.rect(
       (this.tileX * this.tileDrawSize) - this.cam.x,
       (this.tileY * this.tileDrawSize) - this.cam.y,
@@ -189,7 +189,7 @@ class MapEditorState extends State {
     );
     ctx.stroke();
     // Buttons
-    ctx.fillStyle = "rgb(0,0,0)";
+    ctx.fillStyle = this.game.colors.black;
     ctx.fillRect(32, 0, this.game.screenWidth - 64, 32);
     for (let i = 0; i < this.buttons.length; i++) {
       this.buttons[i].render(ctx);

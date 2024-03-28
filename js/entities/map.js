@@ -1,6 +1,6 @@
 'use strict';
 
-class Map {
+class GameMap {
   constructor() {
     this.w = 0;
     this.w2 = 0;
@@ -9,6 +9,19 @@ class Map {
     this.tiles = [];
     this.collisions = [];
     this.objects = [];
+    this.redTeam = {
+      "playerSpawn": {},
+      "heartSpawn": {},
+      "droneSpawns": [],
+      "stationSpawns": []
+    };
+    this.blueTeam = {
+      "playerSpawn": {},
+      "heartSpawn": {},
+      "droneSpawns": [],
+      "stationSpawns": []
+    };
+    this.turrets = [];
   };
   create(width, height) {
     this.w = width;
@@ -17,7 +30,6 @@ class Map {
     this.h2 = Math.floor(this.h * 0.5);
     this.tiles = [];
     this.collisions = [];
-    this.objects = [];
     for (let x = 0; x < this.w; x++) {
       let tiles = [];
       let collisions = [];
@@ -29,7 +41,6 @@ class Map {
       }
       this.tiles.push(tiles);
       this.collisions.push(collisions);
-      this.objects.push(objects);
     }
   };
   load(data) {
@@ -39,7 +50,6 @@ class Map {
     this.h2 = Math.floor(this.h * 0.5);
     this.tiles = [];
     this.collisions = [];
-    this.objects = [];
     for (let x = 0; x < this.w; x++) {
       let tiles = [];
       let collisions = [];
@@ -47,11 +57,51 @@ class Map {
         tiles.push(data.tiles[x][y]);
         collisions.push(data.collisions[x][y]);
         if (data.objects[x][y] != -1) {
-          this.objects.push({
-            "id": data.objects[x][y],
-            "x": x + 0.5,
-            "y": y + 0.5
-          });
+          let id = data.objects[x][y];
+          let pos = {"x": x + 0.5, "y": y + 0.5};
+          switch (id) {
+            case 0:
+              // Red Player Spawn
+              this.redTeam.playerSpawn = pos;
+              break;
+            case 1:
+              // Blue Player Spawn
+              this.blueTeam.playerSpawn = pos;
+              break;
+            case 2:
+              // Red Drone Spawn
+              this.redTeam.droneSpawns.push(pos);
+              break;
+            case 3:
+              // Blue Drone Spawn
+              this.blueTeam.droneSpawns.push(pos);
+              break;
+            case 4:
+              // Red Heart Spawn
+              this.redTeam.heartSpawn = pos;
+              break;
+            case 5:
+              // Blue Heart Spawn
+              this.blueTeam.heartSpawn = pos;
+              break;
+            case 6:
+              // Red Station Spawn
+              this.redTeam.stationSpawns.push(pos);
+              break;
+            case 7:
+              // Blue Station Spawn
+              this.blueTeam.stationSpawns.push(pos);
+              break;
+            case 8:
+              // Unclaimed Turret Spawn
+              break;
+            case 9:
+              // Red Turret Spawn
+              break;
+            case 10:
+              // Blue Turret Spawn
+              break;
+          }
         }
       }
       this.tiles.push(tiles);
@@ -185,7 +235,8 @@ class Map {
     }
     return [];
   };
-  getFlowFieldPath(x, y) {
-
+  getFlowField(x, y) {
+    let grid = [];
+    return grid;
   };
 };
