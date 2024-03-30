@@ -70,4 +70,10 @@ class Vector {
   static fromAngle(angle) {
     return new Vector(Math.cos(angle), Math.sin(angle));
   };
+  toArray() {
+    return [this.x, this.y];
+  };
+  static fromArray(arr) {
+    return new Vector(arr[0], arr[1]);
+  };
 };

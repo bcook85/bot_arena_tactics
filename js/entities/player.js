@@ -3,10 +3,10 @@
 class Player extends Entity {
   constructor(x, y) {
     super(x, y, 0.5);
-    this.angle = 0;//Math.PI * 2 * Math.random();
-    this.moveSpeed = 0.1;
-    this.turnSpeed = 0.05;
-    this.drawSize = 0.75;
-    this.zLevel = 0;
+    this.angle = Math.PI * 2 * Math.random();
+    this.moveAcceleration = 0.01 / 60;
+    this.turnAcceleration = 0.1 / 60;
+    this.maxMoveSpeed = 5 / 60;
+    this.maxTurnSpeed = 2.5 / 60;
   };
 };

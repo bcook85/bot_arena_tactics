@@ -50,12 +50,15 @@ class GameMap {
     this.h2 = Math.floor(this.h * 0.5);
     this.tiles = [];
     this.collisions = [];
+    this.objects = [];
     for (let x = 0; x < this.w; x++) {
       let tiles = [];
       let collisions = [];
+      let objects = [];
       for (let y = 0; y < this.h; y++) {
         tiles.push(data.tiles[x][y]);
         collisions.push(data.collisions[x][y]);
+        objects.push(data.objects[x][y]);
         if (data.objects[x][y] != -1) {
           let id = data.objects[x][y];
           let pos = {"x": x + 0.5, "y": y + 0.5};
@@ -106,6 +109,7 @@ class GameMap {
       }
       this.tiles.push(tiles);
       this.collisions.push(collisions);
+      this.objects.push(objects);
     }
   };
   getTile(x, y) {
@@ -119,6 +123,12 @@ class GameMap {
       return true;
     }
     return this.collisions[Math.floor(x)][Math.floor(y)] == 1;
+  };
+  getObject(x, y) {
+    if (x < 0 || y < 0 || x >= this.w || y >= this.h) {
+      return false;
+    }
+    return this.objects[Math.floor(x)][Math.floor(y)] > 3;
   };
   getMapImage(tileSize, tileImages) {
     let mapCanvas = document.createElement("canvas");
@@ -235,8 +245,73 @@ class GameMap {
     }
     return [];
   };
-  getFlowField(x, y) {
+  getFlowField(targetX, targetY) {
+    // Init Grid
     let grid = [];
+    let fx = Math.floor(targetX);
+    let fy = Math.floor(targetY);
+    for (let x = 0; x < this.w; x++) {
+      let col = [];
+      for (let y = 0; y < this.h; y++) {
+        col.push({
+          "dx": undefined,
+          "dy": undefined,
+          "dist": undefined,
+          "angle": undefined
+        });
+      }
+      grid.push(col);
+    }
+    // Init Start Position
+    grid[fx][fy].dist = 0;
+    grid[fx][fy].angle = 0;
+    // Calculate Distances
+    let distanceNeighbors = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+    let toCheck = [];
+    toCheck.push([fx, fy]);
+    while (toCheck.length > 0) {
+      let c = toCheck.pop();
+      let cx = c[0];
+      let cy = c[1];
+      for (let i = 0; i < distanceNeighbors.length; i++) {
+        let x = cx + distanceNeighbors[i][0];
+        let y = cy + distanceNeighbors[i][1];
+        if (!this.getCollision(x, y) && this.getObject(x, y) < 4) {
+          if (grid[x][y].dist === undefined) {
+            grid[x][y].dist = grid[cx][cy].dist + 1;
+            toCheck.push([x, y]);
+          }
+        }
+      }
+    }
+    // Calculate Angles
+    let angleNeighbors = [[-1, 0], [1, 0], [0, -1], [0, 1]];//, [-1, 1], [1, 1], [1, -1], [-1, -1]];
+    for (let x = 0; x < this.w; x++) {
+      for (let y = 0; y < this.h; y++) {
+        if (grid[x][y].dist !== undefined) {
+          let dist = grid[x][y].dist;
+          for (let i = 0; i < angleNeighbors.length; i++) {
+            let nx = angleNeighbors[i][0];
+            let ny = angleNeighbors[i][1];
+            let cx = x + nx;
+            let cy = y + ny;
+            if (!this.getCollision(cx, cy)) {
+              let d = grid[cx][cy].dist;
+              if (d < dist) {
+                dist = d;
+                grid[x][y].dx = nx;
+                grid[x][y].dy = ny;
+                let angle = Math.atan2(ny, nx);
+                if (angle < 0) {
+                  angle += Math.PI * 2;
+                }
+                grid[x][y].angle = angle;
+              }
+            }
+          }
+        }
+      }
+    }
     return grid;
   };
 };

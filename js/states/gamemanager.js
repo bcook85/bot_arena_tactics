@@ -6,6 +6,22 @@ class GameManager {
     this.mapID = mapID;
     this.map = new GameMap();
     this.map.load(MAPS[this.mapID]);
+    this.redHeartFlowField = new FlowField(
+      this.map.w,
+      this.map.h,
+      this.map.redTeam.heartSpawn.x,
+      this.map.redTeam.heartSpawn.y,
+      (x, y) => this.map.getObject(x, y),
+      (x, y) => this.map.getCollision(x, y)
+    );
+    this.blueHeartFlowField = new FlowField(
+      this.map.w,
+      this.map.h,
+      this.map.blueTeam.heartSpawn.x,
+      this.map.blueTeam.heartSpawn.y,
+      (x, y) => this.map.getObject(x, y),
+      (x, y) => this.map.getCollision(x, y)
+    );
     // Teams
     this.redTeam = new Team(
       this.map.redTeam.playerSpawn,
@@ -53,7 +69,15 @@ class GameManager {
     this.collisionManager.addEntity(this.redTeam.player);
     for (let i = 0; i < this.redTeam.drones.length; i++) {
       if (this.redTeam.drones[i].alive) {
-        this.collisionManager.addEntity(this.redTeam.drones[i]);
+        let drone = this.redTeam.drones[i];
+        let angle = this.blueHeartFlowField.getAngle(drone.pos.x, drone.pos.y);
+        if (angle !== undefined) {
+          drone.move.x = 1;
+          drone.angle = angle;
+        } else {
+          drone.move.x = 0;
+        }
+        this.collisionManager.addEntity(drone);
       }
     }
     for (let i = 0; i < this.redTeam.stations.length; i++) {
@@ -66,7 +90,15 @@ class GameManager {
     this.collisionManager.addEntity(this.blueTeam.player);
     for (let i = 0; i < this.blueTeam.drones.length; i++) {
       if (this.blueTeam.drones[i].alive) {
-        this.collisionManager.addEntity(this.blueTeam.drones[i]);
+        let drone = this.blueTeam.drones[i];
+        let angle = this.redHeartFlowField.getAngle(drone.pos.x, drone.pos.y);
+        if (angle !== undefined) {
+          drone.move.x = 1;
+          drone.angle = angle;
+        } else {
+          drone.move.x = 0;
+        }
+        this.collisionManager.addEntity(drone);
       }
     }
     for (let i = 0; i < this.blueTeam.stations.length; i++) {

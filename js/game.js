@@ -47,7 +47,7 @@ class Game {
       document.getElementById("gameScreen"),
       this.screenWidth,
       this.screenHeight,
-      1
+      2
     );
     // Init Input
     this.mouse = new MouseManager(this.screen.canvas);
@@ -60,15 +60,18 @@ class Game {
     this.animationFrameId = 0;
     this.fpsFrame = 0;
     this.fpsTime = 0;
-    this.frameTime = 1000 / 60;
-    this.maxDelta = 1000 / 15;
+    this.maxFrameTime = 1000 / 60 * 3;
     // States
     this.states = [];
   };
   start() {
+    let t = 0;
+    this.animationFrameId = requestAnimationFrame((t) => this.loadLoop(t));
+  };
+  loadLoop() {
     this.screen.ctx.fillStyle = "rgb(0,0,0)";
     this.screen.ctx.fillRect(0, 0, this.screenWidth, this.screenHeight);
-    this.screen.ctx.font = `${Math.floor(this.screenWidth * 0.1)}px Monospace`;
+    this.screen.ctx.font = `bold ${Math.floor(this.screenWidth * 0.1)}px Monospace`;
     this.screen.ctx.fillStyle = "rgb(255,0,0)";
     this.screen.ctx.textAlign = "center";
     this.screen.ctx.textBaseline = "middle";
@@ -79,19 +82,19 @@ class Game {
     );
     if (this.assets.isLoaded()) {
       new MainState(this).enter();
-      this.animationFrameId = requestAnimationFrame(() => this.loop());
+      this.animationFrameId = requestAnimationFrame((ts) => this.runLoop(ts));
     } else {
-      this.animationFrameId = requestAnimationFrame(() => this.start());
+      this.animationFrameId = requestAnimationFrame((ts) => this.loadLoop(ts));
     }
   };
-  loop() {
+  runLoop(ts) {
     // Re-Loop
-    this.animationFrameId = requestAnimationFrame(() => this.loop());
+    this.animationFrameId = requestAnimationFrame((ts) => this.runLoop(ts));
     // Timing
-    this.now = performance.now();
+    this.now = ts;
     this.elapsed = this.now - this.last;
     this.last = this.now;
-    this.deltaTime = Math.min(this.elapsed, this.maxDelta) / this.frameTime;
+    this.deltaTime = Math.min(this.maxFrameTime, this.elapsed);
     // FPS
     this.fpsFrame += 1;
     this.fpsTime += this.elapsed;

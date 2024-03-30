@@ -15,6 +15,7 @@ class Projector {
     // Set Viewport Options
     this.fov = fieldOfView * Math.PI / 180;
     this.halfFov = this.fov * 0.5;
+    this.objectFov = this.fov * 0.75; // ProjectEntity: to prevent pop in/out at edges
     this.wallHeight = Math.abs(Math.floor(this.halfWidth / Math.tan(this.halfFov)));
     this.wallHeightHalf = this.wallHeight * 0.5;
     this.viewDistance = 32;
@@ -154,10 +155,9 @@ class Projector {
     }
   };
   projectEntity(pos, sprite, drawSize, zLevel) {
-    let camPos = new Vector(this.x, this.y);
-    let angleToTarget = camPos.getAngle(pos);
-    let a1 = Projector.normalizeAngle(this.a - this.halfFov);
-    let a2 = Projector.normalizeAngle(this.a + this.halfFov);
+    let angleToTarget = Math.atan2(pos[1] - this.y, pos[0] - this.x)
+    let a1 = Projector.normalizeAngle(this.a - this.objectFov);
+    let a2 = Projector.normalizeAngle(this.a + this.objectFov);
     if (a2 < a1) {
       a1 -= Projector.twoPI;
     } else {
@@ -166,7 +166,7 @@ class Projector {
     if (angleToTarget >= a1 && angleToTarget <= a2) {
       let a = angleToTarget - this.a;
       let fac = Math.cos(a);
-      let dist = camPos.getDistance(pos) * fac;
+      let dist = Math.hypot(pos[0] - this.x, pos[1] - this.y) * fac;
       if (dist <= this.viewDistance && dist >= 0.25) {
         let size = Math.floor(this.wallHeight * drawSize / dist);
         let bottom = Math.floor(this.halfHeight + (this.wallHeightHalf / dist));
