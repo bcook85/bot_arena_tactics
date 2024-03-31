@@ -4,7 +4,6 @@ class CollisionManager {
   constructor(mapWidth, mapHeight, getCollision) {
     this.entities = [];
     this.getCollision = getCollision;
-    this.scale = 1 / 4;
     this.mapWidth = mapWidth;
     this.mapHeight = mapHeight;
     this.quadTree = new QuadTree(0, 0, this.mapWidth, this.mapHeight);
@@ -25,7 +24,7 @@ class CollisionManager {
       }
       // if too fast, need to repeat the below for each segment
       this.resolveMap(e1);
-      let nearList = this.quadTree.query(e1.pos.x, e1.pos.y, 0, []);
+      let nearList = this.quadTree.query(e1.pos.x, e1.pos.y, e1.radius, []);
       for (let j = 0; j < nearList.length; j++) {
         let index = nearList[j];
         if (i != index) {
@@ -37,28 +36,31 @@ class CollisionManager {
   };
   resolveEntity(e1, e2) {
     if (e1.pos.getDistance(e2.pos) == 0.0) {
-      e1.vel = Vector.fromAngle(Math.random() * Math.PI * 2).normalize().mul(e1.radius * this.scale);
+      let dist = e1.radius + e2.radius;
+      e1.vel = Vector.fromAngle(Math.random() * Math.PI * 2).normalize().mul(e1.radius).div(dist);
       e1.ppos = e1.pos.add(e1.vel);
       this.resolveMap(e1);
-      e2.vel = Vector.fromAngle(Math.random() * Math.PI * 2).normalize().mul(e2.radius * this.scale);
+      e2.vel = Vector.fromAngle(Math.random() * Math.PI * 2).normalize().mul(e2.radius).div(dist);
       e2.ppos = e2.pos.add(e2.vel);
       this.resolveMap(e2);
-      return;
+      return true;
     }
     let dist = e1.ppos.getDistance(e2.ppos);
+    let overlap = dist - e1.radius - e2.radius;
     if (dist < e1.radius + e2.radius) {
-      let overlap = dist - e1.radius - e2.radius;
       if (e2.movable) {
-        overlap *= 0.5;
         dist *= 0.5;
-        e2.ppos = e2.ppos.sub(e2.ppos.sub(e1.ppos).mul(overlap * this.scale).div(dist));
+        overlap *= 0.5;
+        e2.ppos = e2.ppos.sub(e2.ppos.sub(e1.ppos).mul(overlap).div(dist));
         e2.vel = Vector.fromAngle(e2.pos.getAngle(e2.ppos)).normalize().mul(e2.pos.getDistance(e2.ppos));
         this.resolveMap(e2);
       }
-      e1.ppos = e1.ppos.sub(e1.ppos.sub(e2.ppos).mul(overlap * this.scale).div(dist));
+      e1.ppos = e1.ppos.sub(e1.ppos.sub(e2.ppos).mul(overlap).div(dist));
       e1.vel = Vector.fromAngle(e1.pos.getAngle(e1.ppos)).normalize().mul(e1.pos.getDistance(e1.ppos));
       this.resolveMap(e1);
+      return true;
     }
+    return false;
   };
   resolveMap(e) {
     let tl = new Vector(
@@ -89,6 +91,9 @@ class CollisionManager {
           e.vel = Vector.fromAngle(e.pos.getAngle(e.ppos)).normalize().mul(e.pos.getDistance(e.ppos));
         }
       }
+    }
+    if (this.getCollision(e.pos.x, e.pos.y)) {
+      e.pos = e.spawn.copy();
     }
   };
 };

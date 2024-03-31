@@ -2,6 +2,7 @@
 
 class Entity {
   constructor(x, y, r) {
+    this.spawn = new Vector(x, y);
     this.alive = true;
     this.movable = true;
     this.draw = true;

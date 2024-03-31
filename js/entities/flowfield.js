@@ -24,6 +24,7 @@ class FlowField {
     this.grid[fx][fy].dist = 0;
     // Calculate Distances
     let distanceNeighbors = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+    let angleNeighbors = [[-1, 0], [1, 0], [0, -1], [0, 1]];//, [-1, 1], [1, 1], [1, -1], [-1, -1]];
     let toCheck = [[fx, fy]];
     while (toCheck.length > 0) {
       let c = toCheck.shift();
@@ -35,13 +36,20 @@ class FlowField {
         if (!this.grid[x][y].wall) {
           if (this.grid[x][y].dist == undefined) {
             this.grid[x][y].dist = this.grid[cx][cy].dist + 1;
+            // Prefer to stay away from walls
+            for (let j = 0; j < distanceNeighbors.length; j++) {
+              let nx = x + distanceNeighbors[j][0];
+              let ny = y + distanceNeighbors[j][1];
+              if (this.grid[nx][ny].wall) {
+                this.grid[x][y].dist += 1;
+              }
+            }
             toCheck.push([x, y]);
           }
         }
       }
     }
     // Calculate Angles
-    let angleNeighbors = [[-1, 0], [1, 0], [0, -1], [0, 1]];//, [-1, 1], [1, 1], [1, -1], [-1, -1]];
     for (let x = 0; x < this.w; x++) {
       for (let y = 0; y < this.h; y++) {
         if (this.grid[x][y].dist != undefined) {
@@ -66,6 +74,9 @@ class FlowField {
     }
   };
   inBounds(x, y) {
+    if (x === NaN || y === NaN) {
+      return false;
+    }
     if (x < 0 || y < 0 || x >= this.w || y >= this.h) {
       return false;
     }

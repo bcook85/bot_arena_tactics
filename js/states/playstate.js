@@ -8,13 +8,13 @@ class PlayState extends State {
     this.entitySprites = this.game.gfx.entities.toList(32, 32);
     this.redPlayerSprites = [0, 1, 2, 3];
     this.redDroneSprites = [4, 5, 6, 7];
-    this.redStationSprite = 0;
-    this.redHeartSprite = 0;
+    this.redStationSprite = 33;
+    this.redHeartSprite = 34;
     this.redBulletSprite = [];
     this.bluePlayerSprites = [8, 9, 10, 11];
     this.blueDroneSprites = [12, 13, 14, 15];
-    this.blueStationSprite = 0;
-    this.blueHeartSprite = 0;
+    this.blueStationSprite = 32;
+    this.blueHeartSprite = 35;
     this.blueBulletSprite = [];
     this.redTurretSprites = [];
     this.blueTurretSprites = [];
@@ -22,7 +22,7 @@ class PlayState extends State {
     this.playerSize = 0.75;
     this.droneSize = 0.65;
     this.heartSize = 1.0;
-    this.stationSize = 1.0;
+    this.stationSize = 0.75;
     // Game
     this.gameManager = new GameManager(this.game.playerData.selectedMap);
     // Player & AI
@@ -136,10 +136,10 @@ class PlayState extends State {
       "fire": 0,
       "use": 0
     };
-    if (this.game.keys.isDown("w")) {
+    if (this.game.keys.isDown("w") || this.game.keys.isDown("ArrowUp")) {
       gameControls.move += 1;
     }
-    if (this.game.keys.isDown("s")) {
+    if (this.game.keys.isDown("s") || this.game.keys.isDown("ArrowDown")) {
       gameControls.move -= 1;
     }
     if (this.game.keys.isDown("a")) {
@@ -148,13 +148,13 @@ class PlayState extends State {
     if (this.game.keys.isDown("d")) {
       gameControls.strafe += 1;
     }
-    if (this.game.keys.isDown("q")) {
+    if (this.game.keys.isDown("q") || this.game.keys.isDown("ArrowLeft")) {
       gameControls.turn -= 1;
     }
-    if (this.game.keys.isDown("e")) {
+    if (this.game.keys.isDown("e") || this.game.keys.isDown("ArrowRight")) {
       gameControls.turn += 1;
     }
-    if (this.game.keys.isDown("f")) {
+    if (this.game.keys.isDown("f") || this.game.keys.isDown("Enter")) {
       gameControls.use += 1;
     }
     if (this.game.keys.isDown(" ")) {

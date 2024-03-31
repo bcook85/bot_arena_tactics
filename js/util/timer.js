@@ -2,7 +2,7 @@
 
 class Timer {
   constructor(endCount) {
-    this.endCount = endCount;
+    this.endCount = endCount * (1000 / 60);
     this.count = 0;
     this.done = false;
   };

@@ -9,5 +9,8 @@ class Station extends Entity {
     this.turnAcceleration = 0.0;
     this.maxMoveSpeed = 0.0;
     this.maxTurnSpeed = 0.0;
+    this.spawnQueue = 5;
+    this.spawnLocation = -1;
+    this.timer = new Timer(60);
   };
 };

@@ -11,15 +11,13 @@ class Team {
     // Entities
     this.player = new Player(this.playerSpawn.x, this.playerSpawn.y);
     this.drones = [];
-    for (let i = 0; i < 3; i++) {
-      this.drones.push(new Drone(this.droneSpawns[0].x, this.droneSpawns[0].y));
-      this.drones.push(new Drone(this.droneSpawns[1].x, this.droneSpawns[1].y));
-    }
     this.bullets = [];
     this.heart = new Heart(this.heartSpawn.x, this.heartSpawn.y);
     this.stations = [];
     for (let i = 0; i < this.stationSpawns.length; i++) {
-      this.stations.push(new Station(this.stationSpawns[i].x, this.stationSpawns[i].y));
+      let stat = new Station(this.stationSpawns[i].x, this.stationSpawns[i].y);
+      stat.spawnLocation = this.droneSpawns[Math.min(this.droneSpawns.length - 1, i)];
+      this.stations.push(stat);
     }
   };
   update(dt, enemyTeam, turrets, map) {
@@ -29,9 +27,30 @@ class Team {
     for (let i = 0; i < this.drones.length; i++) {
       this.drones[i].applyControls(dt);
     }
+    //  Stations
+    for (let i = 0; i < this.stations.length; i++) {
+      let stat = this.stations[i];
+      stat.timer.tick(dt);
+      if (stat.spawnQueue == 0) {
+        continue;
+      }
+      if (!stat.timer.isDone()) {
+        continue;
+      }
+      let spawn = stat.spawnLocation;
+      if (this.isSpawnClear(spawn.x, spawn.y, 0.5, enemyTeam)) {
+        stat.spawnQueue -= 1;
+        this.drones.push(new Drone(spawn.x, spawn.y));
+        stat.timer.reset();
+      }
+    }
     // Bullets
     for (let i = 0; i < this.bullets.length; i++) {
 
     }
+  };
+  isSpawnClear(x, y, r, enemyTeam) {
+
+    return true;
   };
 };
