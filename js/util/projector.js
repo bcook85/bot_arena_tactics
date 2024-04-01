@@ -163,55 +163,75 @@ class Projector {
     } else {
       angleToTarget = Projector.normalizeAngle(angleToTarget);
     }
-    if (angleToTarget >= a1 && angleToTarget <= a2) {
-      let a = angleToTarget - this.a;
-      let fac = Math.cos(a);
-      let dist = Math.hypot(pos[0] - this.x, pos[1] - this.y) * fac;
-      if (dist <= this.viewDistance && dist >= 0.25) {
-        let size = Math.floor(this.wallHeight * drawSize / dist);
-        let bottom = Math.floor(this.halfHeight + (this.wallHeightHalf / dist));
-        let top = bottom - size - (zLevel * (this.wallHeight / dist));
-        let left = Math.floor(this.halfWidth + (Math.tan(a) * this.wallHeight) - (size * 0.5));
-        if (left < this.width && left + size >= 0) {
-          let obj = {};
-          obj.dist = dist;
-          obj.left = left;
-          obj.top = top;
-          obj.size = size;
-          obj.sprite = sprite;
-          for (let i = 0; i < this.objects.length; i++) {
-            if (obj.dist > this.objects[i].dist) {
-              this.objects.splice(i, 0, obj);
-              return;
-            }
-          }
-          this.objects.push(obj);
-        }
+    if (angleToTarget < a1 || angleToTarget > a2) { return; }
+    let a = angleToTarget - this.a;
+    let fac = Math.cos(a);
+    let dist = Math.hypot(pos[0] - this.x, pos[1] - this.y) * fac;
+    if (dist > this.viewDistance || dist < 0.25) { return; }
+    let size = Math.floor(this.wallHeight * drawSize / dist);
+    let bottom = Math.floor(this.halfHeight + (this.wallHeightHalf / dist));
+    let top = bottom - size - (zLevel * (this.wallHeight / dist));
+    let left = Math.floor(this.halfWidth + (Math.tan(a) * this.wallHeight) - (size * 0.5));
+    if (!(left < this.width && left + size >= 0)) { return; }
+    let finalLeft = left;
+    let finalRight = Math.floor(left + size);
+    let firstDraw = undefined;
+    let firstWall = undefined;
+    for (let j = Math.max(0, finalLeft); j < Math.min(this.width, finalRight); j++) {
+      if (!firstWall && dist >= this.walls[j].distance) {
+        firstWall = j;
+      }
+      if (!firstDraw && dist <= this.walls[j].distance) {
+        firstDraw = j;
+      }
+      if (firstDraw && firstWall) { break; }
+    }
+    let imageL = 0;
+    let imageW = sprite.width;
+    if (!firstDraw) { return; }
+    if (firstWall) {
+      if (firstWall < firstDraw) {
+        finalLeft = firstDraw;
+      } else {
+        finalRight = firstWall;
+      }
+      imageL = Math.floor(((finalLeft - left) / size) * sprite.width);
+      imageW = Math.ceil(((finalRight - finalLeft) / size) * sprite.width);
+    }
+    let obj = {};
+    obj.top = top;
+    obj.size = size;
+    obj.sprite = sprite;
+    obj.left = finalLeft;
+    obj.right = finalRight;
+    obj.imageL = imageL;
+    obj.imageW = imageW;
+    obj.dist = dist;
+    for (let i = 0; i < this.objects.length; i++) {
+      if (obj.dist > this.objects[i].dist) {
+        this.objects.splice(i, 0, obj);
+        return;
       }
     }
+    this.objects.push(obj);
   };
   drawEntities(ctx) {
     for (let i = 0; i < this.objects.length; i++) {
       let obj = this.objects[i];
-      let left = Math.max(0, obj.left);
-      let right = Math.min(this.width, Math.floor(obj.left + obj.size - 1));
-      for (let j = left; j < right; j++) {
-        if (obj.dist < this.walls[j].distance) {
-          ctx.drawImage(
-            obj.sprite,
-            Math.floor((j - obj.left) / obj.size * obj.sprite.width),
-            0,
-            1,
-            obj.sprite.height,
-            j,
-            obj.top,
-            1,
-            obj.size
-          );
-        }
-      }
+      ctx.drawImage(
+        obj.sprite,
+        obj.imageL,
+        0,
+        obj.imageW,
+        obj.sprite.height,
+        Math.floor(obj.left),
+        obj.top,
+        Math.ceil(obj.right - obj.left),
+        obj.size
+      );
     }
     this.objects = [];
+
   };
   static normalizeAngle(angle) {
     let newAngle = angle;

@@ -49,7 +49,6 @@ class CollisionManager {
     let overlap = dist - e1.radius - e2.radius;
     if (dist < e1.radius + e2.radius) {
       if (e2.movable) {
-        dist *= 0.5;
         overlap *= 0.5;
         e2.ppos = e2.ppos.sub(e2.ppos.sub(e1.ppos).mul(overlap).div(dist));
         e2.vel = Vector.fromAngle(e2.pos.getAngle(e2.ppos)).normalize().mul(e2.pos.getDistance(e2.ppos));

@@ -5,6 +5,8 @@ class FlowField {
     this.w = w;
     this.h = h;
     this.grid = [];
+    this.neighborsDirect = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+    this.neighborsAll = [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, 1], [1, 1], [1, -1], [-1, -1]];
     let fx = Math.floor(targetX);
     let fy = Math.floor(targetY);
     for (let x = 0; x < this.w; x++) {
@@ -23,27 +25,17 @@ class FlowField {
     // Init Start Position
     this.grid[fx][fy].dist = 0;
     // Calculate Distances
-    let distanceNeighbors = [[-1, 0], [1, 0], [0, -1], [0, 1]];
-    let angleNeighbors = [[-1, 0], [1, 0], [0, -1], [0, 1]];//, [-1, 1], [1, 1], [1, -1], [-1, -1]];
     let toCheck = [[fx, fy]];
     while (toCheck.length > 0) {
       let c = toCheck.shift();
       let cx = c[0];
       let cy = c[1];
-      for (let i = 0; i < distanceNeighbors.length; i++) {
-        let x = cx + distanceNeighbors[i][0];
-        let y = cy + distanceNeighbors[i][1];
+      for (let i = 0; i < this.neighborsDirect.length; i++) {
+        let x = cx + this.neighborsDirect[i][0];
+        let y = cy + this.neighborsDirect[i][1];
         if (!this.grid[x][y].wall) {
           if (this.grid[x][y].dist == undefined) {
             this.grid[x][y].dist = this.grid[cx][cy].dist + 1;
-            // Prefer to stay away from walls
-            for (let j = 0; j < distanceNeighbors.length; j++) {
-              let nx = x + distanceNeighbors[j][0];
-              let ny = y + distanceNeighbors[j][1];
-              if (this.grid[nx][ny].wall) {
-                this.grid[x][y].dist += 1;
-              }
-            }
             toCheck.push([x, y]);
           }
         }
@@ -54,9 +46,9 @@ class FlowField {
       for (let y = 0; y < this.h; y++) {
         if (this.grid[x][y].dist != undefined) {
           let dist = this.grid[x][y].dist;
-          for (let i = 0; i < angleNeighbors.length; i++) {
-            let nx = angleNeighbors[i][0];
-            let ny = angleNeighbors[i][1];
+          for (let i = 0; i < this.neighborsAll.length; i++) {
+            let nx = this.neighborsAll[i][0];
+            let ny = this.neighborsAll[i][1];
             let cx = x + nx;
             let cy = y + ny;
             if (!this.grid[x][y].wall) {

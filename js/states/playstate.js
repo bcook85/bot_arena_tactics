@@ -82,12 +82,11 @@ class PlayState extends State {
     // Red Drones
     for (let i = 0; i < this.gameManager.redTeam.drones.length; i++) {
       let drone = this.gameManager.redTeam.drones[i];
-      if (drone.alive) {
-        let angle = Projector.normalizeAngle(drone.pos.getAngle(camPos) + (Math.PI * 0.25) - drone.angle);
-        let frame = Math.floor((angle / (Math.PI * 2)) * this.redDroneSprites.length);
-        let sprite = this.entitySprites[this.redDroneSprites[frame]];
-        this.cam.projectEntity(drone.pos.toArray(), sprite, this.droneSize, 0);
-      }
+      if (!drone.alive) { continue; }
+      let angle = Projector.normalizeAngle(drone.pos.getAngle(camPos) + (Math.PI * 0.25) - drone.angle);
+      let frame = Math.floor((angle / (Math.PI * 2)) * this.redDroneSprites.length);
+      let sprite = this.entitySprites[this.redDroneSprites[frame]];
+      this.cam.projectEntity(drone.pos.toArray(), sprite, this.droneSize, 0);
     }
     // Red Stations
     for (let i = 0; i < this.gameManager.redTeam.stations.length; i++) {
@@ -109,12 +108,11 @@ class PlayState extends State {
     // Blue Drones
     for (let i = 0; i < this.gameManager.blueTeam.drones.length; i++) {
       let drone = this.gameManager.blueTeam.drones[i];
-      if (drone.alive) {
-        let angle = Projector.normalizeAngle(drone.pos.getAngle(camPos) + (Math.PI * 0.25) - drone.angle);
-        let frame = Math.floor((angle / (Math.PI * 2)) * this.blueDroneSprites.length);
-        let sprite = this.entitySprites[this.blueDroneSprites[frame]];
-        this.cam.projectEntity(drone.pos.toArray(), sprite, this.droneSize, 0);
-      }
+      if (!drone.alive) { continue; }
+      let angle = Projector.normalizeAngle(drone.pos.getAngle(camPos) + (Math.PI * 0.25) - drone.angle);
+      let frame = Math.floor((angle / (Math.PI * 2)) * this.blueDroneSprites.length);
+      let sprite = this.entitySprites[this.blueDroneSprites[frame]];
+      this.cam.projectEntity(drone.pos.toArray(), sprite, this.droneSize, 0);
     }
     // Blue Stations
     for (let i = 0; i < this.gameManager.blueTeam.stations.length; i++) {
