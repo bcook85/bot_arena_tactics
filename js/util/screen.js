@@ -1,7 +1,12 @@
 'use strict';
 
 class Screen {
-  constructor(canvas, width, height, scaling=0) {
+  static SCALING = {
+    "none": 0,
+    "integer": 1,
+    "aspectRatio": 2
+  };
+  constructor(canvas, width, height, scaling) {
     this.canvas = canvas;
     this.width = width;
     this.height = height;
@@ -11,11 +16,11 @@ class Screen {
     this.canvas.oncontextmenu = () => { return false; };
     this.canvas.onselectstart = () => { return false; };
     // Automatically re-size game canvas
-    if (scaling == 1) {
+    if (scaling == Screen.SCALING.integer) {
       window.addEventListener("resize", () => { this.screenScaleInteger(); }, false);
       window.addEventListener("orientationchange", () => { this.screenScaleInteger(); }, false);
       this.screenScaleInteger();
-    } else if (scaling == 2) {
+    } else if (scaling == Screen.SCALING.aspectRatio) {
       window.addEventListener("resize", () => { this.screenScaleStretch(); }, false);
       window.addEventListener("orientationchange", () => { this.screenScaleStretch(); }, false);
       this.screenScaleStretch();

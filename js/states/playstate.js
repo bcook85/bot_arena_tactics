@@ -69,59 +69,48 @@ class PlayState extends State {
     this.cam.drawEntities(ctx);
   };
   projectEntities() {
+    // Turrets
+    // Collectors
+    // Teams
+    this.renderTeam(
+      this.gameManager.redTeam,
+      this.redPlayerSprites,
+      this.redDroneSprites,
+      this.redStationSprite,
+      this.redHeartSprite
+    );
+    this.renderTeam(
+      this.gameManager.blueTeam,
+      this.bluePlayerSprites,
+      this.blueDroneSprites,
+      this.blueStationSprite,
+      this.blueHeartSprite
+    );
+  };
+  renderTeam(team, playerSprites, droneSprites, stationSprite, heartSprite) {
     let camPos = new Vector(this.cam.x, this.cam.y);
-
-    // Red Player
-    if (this.playerTeam == 1) {
-      let player = this.gameManager.redTeam.player;
-      let angle = Projector.normalizeAngle(player.pos.getAngle(camPos) - player.angle + (Math.PI * 0.25));
-      let frame = Math.floor((angle / (Math.PI * 2)) * this.redPlayerSprites.length);
-      let sprite = this.entitySprites[this.redPlayerSprites[frame]];
-      this.cam.projectEntity(player.pos.toArray(), sprite, this.playerSize, 0);
-    }
-    // Red Drones
-    for (let i = 0; i < this.gameManager.redTeam.drones.length; i++) {
-      let drone = this.gameManager.redTeam.drones[i];
+    // Player
+    let player = team.player;
+    let pAngle = Projector.normalizeAngle(player.pos.getAngle(camPos) - player.angle + (Math.PI * 0.25));
+    let pFrame = Math.floor((pAngle / (Math.PI * 2)) * playerSprites.length);
+    let pSprite = this.entitySprites[playerSprites[pFrame]];
+    this.cam.projectEntity(player.pos.toArray(), pSprite, this.playerSize, 0);
+    // Drones
+    for (let i = 0; i < team.drones.length; i++) {
+      let drone = team.drones[i];
       if (!drone.alive) { continue; }
       let angle = Projector.normalizeAngle(drone.pos.getAngle(camPos) + (Math.PI * 0.25) - drone.angle);
-      let frame = Math.floor((angle / (Math.PI * 2)) * this.redDroneSprites.length);
-      let sprite = this.entitySprites[this.redDroneSprites[frame]];
+      let frame = Math.floor((angle / (Math.PI * 2)) * droneSprites.length);
+      let sprite = this.entitySprites[droneSprites[frame]];
       this.cam.projectEntity(drone.pos.toArray(), sprite, this.droneSize, 0);
     }
-    // Red Stations
-    for (let i = 0; i < this.gameManager.redTeam.stations.length; i++) {
-      let station = this.gameManager.redTeam.stations[i];
-      this.cam.projectEntity(station.pos.toArray(), this.entitySprites[this.redStationSprite], this.stationSize, 0);
+    // Stations
+    for (let i = 0; i < team.stations.length; i++) {
+      let station = team.stations[i];
+      this.cam.projectEntity(station.pos.toArray(), this.entitySprites[stationSprite], this.stationSize, 0);
     }
-    // Red Heart
-    let redHeart = this.gameManager.redTeam.heart;
-    this.cam.projectEntity(redHeart.pos.toArray(), this.entitySprites[this.redHeartSprite], this.heartSize, 0);
-
-    // Blue Player
-    if (this.playerTeam == 0) {
-      let player = this.gameManager.blueTeam.player;
-      let angle = Projector.normalizeAngle(player.pos.getAngle(camPos) + (Math.PI * 0.25) - player.angle);
-      let frame = Math.floor((angle / (Math.PI * 2)) * this.bluePlayerSprites.length);
-      let sprite = this.entitySprites[this.bluePlayerSprites[frame]];
-      this.cam.projectEntity(player.pos.toArray(), sprite, this.playerSize, 0);
-    }
-    // Blue Drones
-    for (let i = 0; i < this.gameManager.blueTeam.drones.length; i++) {
-      let drone = this.gameManager.blueTeam.drones[i];
-      if (!drone.alive) { continue; }
-      let angle = Projector.normalizeAngle(drone.pos.getAngle(camPos) + (Math.PI * 0.25) - drone.angle);
-      let frame = Math.floor((angle / (Math.PI * 2)) * this.blueDroneSprites.length);
-      let sprite = this.entitySprites[this.blueDroneSprites[frame]];
-      this.cam.projectEntity(drone.pos.toArray(), sprite, this.droneSize, 0);
-    }
-    // Blue Stations
-    for (let i = 0; i < this.gameManager.blueTeam.stations.length; i++) {
-      let station = this.gameManager.blueTeam.stations[i];
-      this.cam.projectEntity(station.pos.toArray(), this.entitySprites[this.blueStationSprite], this.stationSize, 0);
-    }
-    // Blue Heart
-    let blueHeart = this.gameManager.blueTeam.heart;
-    this.cam.projectEntity(blueHeart.pos.toArray(), this.entitySprites[this.blueHeartSprite], this.heartSize, 0);
+    // Heart
+    this.cam.projectEntity(team.heart.pos.toArray(), this.entitySprites[heartSprite], this.heartSize, 0);
   };
   getAIControls() {
     return {"move": 1,"strafe": 0,"turn": 1,"fire": 0,"use": 0};

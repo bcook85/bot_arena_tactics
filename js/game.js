@@ -47,7 +47,7 @@ class Game {
       document.getElementById("gameScreen"),
       this.screenWidth,
       this.screenHeight,
-      2
+      Screen.SCALING.aspectRatio
     );
     // Init Input
     this.mouse = new MouseManager(this.screen.canvas);
@@ -60,7 +60,8 @@ class Game {
     this.animationFrameId = 0;
     this.fpsFrame = 0;
     this.fpsTime = 0;
-    this.maxFrameTime = 1000 / 60 * 3;
+    this.fpsMin = 20;
+    this.maxFrameTime = 1000 / this.fpsMin;
     // States
     this.states = [];
   };

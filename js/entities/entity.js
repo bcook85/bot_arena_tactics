@@ -14,13 +14,11 @@ class Entity {
     this.angle = 0;
     this.move = new Vector(0, 0);
     this.turn = 0;
-    this.moveAcceleration = 0.001 / 60;
-    this.turnAcceleration = 0.001 / 60;
+    this.moveAcceleration = 0;
+    this.turnAcceleration = 0;
     this.turnSpeed = 0.0;
-    this.maxMoveSpeed = 0.01 / 60;
-    this.maxTurnSpeed = 0.01 / 60;
-    this.turnDrag = 0.88;
-    this.moveDrag = 0.88;
+    this.maxMoveSpeed = 0;
+    this.maxTurnSpeed = 0;
   };
   applyControls(dt) {
     // Calculate Turn

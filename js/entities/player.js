@@ -8,5 +8,10 @@ class Player extends Entity {
     this.turnAcceleration = 0.1 / 60;
     this.maxMoveSpeed = 5 / 60;
     this.maxTurnSpeed = 2.5 / 60;
+    this.turnDrag = 0.88;
+    this.moveDrag = 0.88;
+    this.showDroneShop = 0;
+    this.showTurretShop = 0;
+    this.isNearCollector = 0;
   };
 };
