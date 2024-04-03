@@ -50,3 +50,34 @@ class Button {
     ctx.fillText(this.text, this.x, this.y);
   };
 };
+
+class ImageButton {
+  constructor(defaultImage, hoverImage, x, y, r) {
+    this.defaultImage = defaultImage;
+    this.hoverImage = hoverImage;
+    this.x = x;
+    this.y = y;
+    this.r = r;
+    this.isHover = false;
+    this.isClick = false;
+  };
+  update(mouse) {
+    this.isHover = false;
+    this.isClick = false;
+    if (mouse.isDown("left") || mouse.isDown("touch")) {
+      let mx = mouse.x - this.x;
+      let my = mouse.y - this.y;
+      if ((mx * mx) + (my * my) > this.r * this.r) { return; }
+      this.isHover = true;
+      this.isClick = true;
+    }
+  };
+  render(ctx) {
+    let image = this.isHover || this.isClick ? this.hoverImage : this.defaultImage;
+    ctx.drawImage(
+      image,
+      0,0,image.width,image.height,
+      this.x - this.r, this.y - this.r, this.r * 2, this.r * 2
+    );
+  };
+};

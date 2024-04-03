@@ -6,13 +6,13 @@ class KeyManager {
     this.keysReleased = {};
     window.addEventListener(
       "keydown", (e) => {
-        this.keysPressed[e.key] = true;
+        this.keysPressed[e.code] = true;
       },false
     );
     window.addEventListener(
       "keyup", (e) => {
-        delete this.keysPressed[e.key];
-        this.keysReleased[e.key] = true;
+        delete this.keysPressed[e.code];
+        this.keysReleased[e.code] = true;
       },false
     );
   };

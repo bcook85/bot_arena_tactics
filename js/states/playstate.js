@@ -6,6 +6,7 @@ class PlayState extends State {
     // Assets
     this.wallSprites = this.game.gfx.tiles.toList(32, 32);
     this.entitySprites = this.game.gfx.entities.toList(32, 32);
+    this.uiSprites = this.game.gfx.ui.toList(32, 32);
     this.redPlayerSprites = [0, 1, 2, 3];
     this.redDroneSprites = [4, 5, 6, 7];
     this.redStationSprite = 33;
@@ -26,6 +27,7 @@ class PlayState extends State {
     // Game
     this.gameManager = new GameManager(this.game.playerData.selectedMap);
     // Player & AI
+    this.aiVision = new Vision(16, 60, 32);
     this.cam = new Projector(
       this.game.screenWidth,
       this.game.screenHeight,
@@ -38,15 +40,62 @@ class PlayState extends State {
       this.playerTeam = 1;
       this.aiTeam = 0;
     }
+    // Touch Controls
+    this.moveControlButton = new ImageButton(
+      this.uiSprites[0],
+      this.uiSprites[1],
+      48,
+      this.game.screenHeight - 48,
+      32
+    );
+    this.turnRightControlButton = new ImageButton(
+      this.uiSprites[4],
+      this.uiSprites[5],
+      this.game.screenWidth - 48,
+      this.game.screenHeight - 32,
+      16
+    );
+    this.turnLeftControlButton = new ImageButton(
+      this.uiSprites[2],
+      this.uiSprites[3],
+      this.game.screenWidth - 96,
+      this.game.screenHeight - 32,
+      16
+    );
+    this.useControlButton = new ImageButton(
+      this.uiSprites[0],
+      this.uiSprites[1],
+      this.game.screenWidth - 64,
+      this.game.screenHeight - 128,
+      16
+    );
+    this.fireControlButton = new ImageButton(
+      this.uiSprites[0],
+      this.uiSprites[1],
+      this.game.screenWidth - 64,
+      this.game.screenHeight - 80,
+      16
+    );
+    this.menuButton = new Button(
+      "Menu",
+      this.game.fonts.button,
+      this.game.screenWidth - 48,
+      24,
+      72,
+      24
+    );
   };
   update(dt) {
-    // User Input
-    if (this.game.keys.isUp("Escape")) {
+    // Open Pause Menu
+    this.menuButton.update(this.game.mouse);
+    if (this.game.keys.isUp("Escape") || this.menuButton.isClick) {
       new PlayMenuState(this.game).enter();
       return;
     }
+
+    // Player Controls
     let controls = [];
-    controls[this.playerTeam] = this.getKeyboardControls();
+    controls[this.playerTeam] = this.getPlayerControls();
     controls[this.aiTeam] = this.getAIControls();
 
     // Update Game
@@ -67,6 +116,14 @@ class PlayState extends State {
     this.cam.drawBackgroundColors(ctx, "rgb(150,150,150)", "rgb(50,50,50)");
     this.cam.drawWalls(ctx);
     this.cam.drawEntities(ctx);
+    if (this.game.mouse.touchEnabled) {
+      this.renderTouchControls(ctx);
+    }
+    let player = this.gameManager.getPlayer(this.playerTeam);
+    // Station Shop
+    if (player.showDroneShop == 1) {
+      this.renderStationMenu(ctx);
+    }
   };
   projectEntities() {
     // Turrets
@@ -112,10 +169,77 @@ class PlayState extends State {
     // Heart
     this.cam.projectEntity(team.heart.pos.toArray(), this.entitySprites[heartSprite], this.heartSize, 0);
   };
+  renderStationMenu(ctx) {
+    // Background
+    ctx.fillStyle = this.game.colors.menuBackground;
+    ctx.fillRect(
+      Math.floor(this.game.screenWidth * 0.5) - 128,
+      Math.floor(this.game.screenHeight * 0.5) - 48,
+      256, 96
+    );
+    // Border
+    ctx.beginPath();
+    ctx.lineWidth = "3";
+    ctx.strokeStyle = this.game.colors.textHighlight;
+    ctx.rect(
+      Math.floor(this.game.screenWidth * 0.5) - 128,
+      Math.floor(this.game.screenHeight * 0.5) - 48,
+      256, 96
+    );
+    ctx.stroke();
+    // Purchase Text
+    ctx.font = this.game.fonts.small;
+    ctx.fillStyle = this.game.colors.textHighlight;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(
+      "Purchase Drone for 50 Credits?"
+      ,Math.floor(this.game.screenWidth * 0.5)
+      ,Math.floor(this.game.screenHeight * 0.5) - 16
+    );
+    ctx.fillText(
+      "Press: F or ENTER"
+      ,Math.floor(this.game.screenWidth * 0.5)
+      ,Math.floor(this.game.screenHeight * 0.5) + 16
+    );
+  };
+  renderTouchControls(ctx) {
+    this.moveControlButton.render(ctx);
+    this.turnRightControlButton.render(ctx);
+    this.turnLeftControlButton.render(ctx);
+    this.useControlButton.render(ctx);
+    this.fireControlButton.render(ctx);
+    ctx.fillStyle = this.game.colors.menuBackground;
+    ctx.fillRect(this.menuButton.left, this.menuButton.top, this.menuButton.width, this.menuButton.height);
+    this.menuButton.render(ctx);
+  };
   getAIControls() {
+    /*let visionTypes = [
+      "empty",
+      "wall",
+      "drone",
+      "station",
+      "heart",
+      "turret",
+      "collector",
+      "unclaimedCollector",
+      "unclaimedTurret",
+      "enemyPlayer",
+      "enemyDrone",
+      "enemyStation",
+      "enemyHeart",
+      "enemyTurret",
+      "enemyCollector"
+    ];
+    let visionValues = [];
+    let len = visionTypes.length;
+    for (let i = 0; i < len; i++) {
+      let val = i / (visionTypes.length - 1);
+      visionValues.push(Math.floor(val * 100) / 100);
+    }*/
     return {"move": 1,"strafe": 0,"turn": 1,"fire": 0,"use": 0};
   };
-  getKeyboardControls() {
+  getPlayerControls() {
     let gameControls = {
       "move": 0,
       "strafe": 0,
@@ -123,29 +247,65 @@ class PlayState extends State {
       "fire": 0,
       "use": 0
     };
-    if (this.game.keys.isDown("w") || this.game.keys.isDown("ArrowUp")) {
+    if (this.game.mouse.touchEnabled) {
+      this.moveControlButton.update(this.game.mouse);
+      if (this.moveControlButton.isClick) {
+        let angle = Math.atan2(
+          this.moveControlButton.y - this.game.mouse.y,
+          this.moveControlButton.x - this.game.mouse.x
+        ) - (Math.PI * 0.5);//shift down 90 as 0 is ->
+        angle = Vector.normalizeAngle(angle);
+        if (angle > Math.PI * 1.75 || angle < Math.PI * 0.25) {
+          gameControls.move += 1;
+        } else if (angle > Math.PI * 0.25 && angle < Math.PI * 0.75) {
+          gameControls.strafe += 1;
+        } else if (angle > Math.PI * 0.75 && angle < Math.PI * 1.25) {
+          gameControls.move -= 1;
+        } else if (angle > Math.PI * 1.25 && angle < Math.PI * 1.75) {
+          gameControls.strafe -= 1;
+        }
+      }
+      this.turnRightControlButton.update(this.game.mouse);
+      if (this.turnRightControlButton.isClick) {
+        gameControls.turn += 1;
+      }
+      this.turnLeftControlButton.update(this.game.mouse);
+      if (this.turnLeftControlButton.isClick) {
+        gameControls.turn -= 1;
+      }
+      this.useControlButton.update(this.game.mouse);
+      if (this.useControlButton.isClick) {
+        gameControls.use = 1;
+      }
+      this.fireControlButton.update(this.game.mouse);
+      if (this.fireControlButton.isClick) {
+        gameControls.fire = 1;
+      }
+    } else {
+      if (this.game.keys.isDown("KeyW") || this.game.keys.isDown("ArrowUp")) {
       gameControls.move += 1;
-    }
-    if (this.game.keys.isDown("s") || this.game.keys.isDown("ArrowDown")) {
-      gameControls.move -= 1;
-    }
-    if (this.game.keys.isDown("a")) {
-      gameControls.strafe -= 1;
-    }
-    if (this.game.keys.isDown("d")) {
-      gameControls.strafe += 1;
-    }
-    if (this.game.keys.isDown("q") || this.game.keys.isDown("ArrowLeft")) {
-      gameControls.turn -= 1;
-    }
-    if (this.game.keys.isDown("e") || this.game.keys.isDown("ArrowRight")) {
-      gameControls.turn += 1;
-    }
-    if (this.game.keys.isDown("f") || this.game.keys.isDown("Enter")) {
-      gameControls.use += 1;
-    }
-    if (this.game.keys.isDown(" ")) {
-      gameControls.fire += 1;
+      }
+      if (this.game.keys.isDown("KeyS") || this.game.keys.isDown("ArrowDown")) {
+        gameControls.move -= 1;
+      }
+      if (this.game.keys.isDown("KeyA")) {
+        gameControls.strafe -= 1;
+      }
+      if (this.game.keys.isDown("KeyD")) {
+        gameControls.strafe += 1;
+      }
+      if (this.game.keys.isDown("KeyQ") || this.game.keys.isDown("ArrowLeft")) {
+        gameControls.turn -= 1;
+      }
+      if (this.game.keys.isDown("KeyE") || this.game.keys.isDown("ArrowRight")) {
+        gameControls.turn += 1;
+      }
+      if (this.game.keys.isUp("KeyF") || this.game.keys.isUp("Enter")) {
+        gameControls.use = 1;
+      }
+      if (this.game.keys.isDown("Space") || this.game.keys.isDown("ShiftRight")) {
+        gameControls.fire = 1;
+      }
     }
     return gameControls;
   };

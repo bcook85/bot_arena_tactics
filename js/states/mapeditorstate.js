@@ -67,16 +67,16 @@ class MapEditorState extends State {
       }
     }
     // Keyboard Controls
-    if (this.game.keys.isDown("w") || this.game.keys.isDown("ArrowUp")) {
+    if (this.game.keys.isDown("KeyW") || this.game.keys.isDown("ArrowUp")) {
       this.cam.y = Math.max(this.camMinY, this.cam.y - this.camSpeed);
     }
-    if (this.game.keys.isDown("s") || this.game.keys.isDown("ArrowDown")) {
+    if (this.game.keys.isDown("KeyS") || this.game.keys.isDown("ArrowDown")) {
       this.cam.y = Math.min(this.camMaxY, this.cam.y + this.camSpeed);
     }
-    if (this.game.keys.isDown("a") || this.game.keys.isDown("ArrowLeft")) {
+    if (this.game.keys.isDown("KeyA") || this.game.keys.isDown("ArrowLeft")) {
       this.cam.x = Math.max(this.camMinX, this.cam.x - this.camSpeed);
     }
-    if (this.game.keys.isDown("d") || this.game.keys.isDown("ArrowRight")) {
+    if (this.game.keys.isDown("KeyD") || this.game.keys.isDown("ArrowRight")) {
       this.cam.x = Math.min(this.camMaxX, this.cam.x + this.camSpeed);
     }
     // Mouse

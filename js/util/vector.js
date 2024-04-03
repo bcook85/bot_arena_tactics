@@ -76,4 +76,13 @@ class Vector {
   static fromArray(arr) {
     return new Vector(arr[0], arr[1]);
   };
+  static normalizeAngle(angle) {
+    let newAngle = angle
+    if (newAngle > Math.PI * 2) {
+      newAngle -= Math.PI * 2;
+    } else if (newAngle < 0) {
+      newAngle += Math.PI * 2;
+    }
+    return newAngle;
+  };
 };

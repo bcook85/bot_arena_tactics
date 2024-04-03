@@ -10,5 +10,9 @@ class Drone extends Entity {
     this.maxTurnSpeed = 2 / 60;
     this.turnDrag = 0.1;
     this.moveDrag = 0.1;
+    this.bulletDamage = 10;
+    this.bulletSpeed = 10 / 60;
+    this.bulletRadius = 0.25;
+    this.cooldown = new Timer(30);
   };
 };

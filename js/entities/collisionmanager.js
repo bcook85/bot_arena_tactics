@@ -13,6 +13,10 @@ class CollisionManager {
     this.quadTree.addEntity(e.pos.x, e.pos.y, this.entities.length - 1);
   };
   update() {
+    /*
+      To Try:
+        applyVelocity to all entities, THEN do the collision fixes. Maybe that's better.
+    */
     for (let i = 0; i < this.entities.length; i++) {
       let e1 = this.entities[i];
       if (!e1.movable) {
@@ -48,15 +52,14 @@ class CollisionManager {
     let dist = e1.ppos.getDistance(e2.ppos);
     let overlap = (dist - (e1.radius + e2.radius));
     if (dist < e1.radius + e2.radius) {
-      let e2ppos = e2.ppos.copy();
       if (e2.movable) {
         overlap *= 0.5;
-        e2.ppos = e2.ppos.sub(e2.ppos.sub(e1.ppos).normalize().mul(overlap).div(dist));
-        e2.vel = e2.ppos.sub(e2.pos);
+        e2.vel = e2.ppos.sub(e2.ppos.sub(e1.ppos).normalize().mul(overlap).div(dist)).sub(e2.pos);
+        e2.ppos = e2.pos.add(e2.vel);
         this.resolveMap(e2);
       }
-      e1.ppos = e1.ppos.sub(e1.ppos.sub(e2ppos).normalize().mul(overlap).div(dist));
-      e1.vel = e1.ppos.sub(e1.pos);
+      e1.vel = e1.ppos.sub(e1.ppos.sub(e2.ppos).normalize().mul(overlap).div(dist)).sub(e1.pos);
+      e1.ppos = e1.pos.add(e1.vel);
       this.resolveMap(e1);
       return true;
     }

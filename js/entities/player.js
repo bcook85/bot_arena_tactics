@@ -13,5 +13,11 @@ class Player extends Entity {
     this.showDroneShop = 0;
     this.showTurretShop = 0;
     this.isNearCollector = 0;
+    this.use = false;
+    this.fire = false;
+    this.bulletDamage = 25;
+    this.bulletSpeed = 15 / 60;
+    this.bulletRadius = 0.25;
+    this.cooldown = new Timer(30);
   };
 };

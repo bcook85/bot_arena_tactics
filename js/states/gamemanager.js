@@ -59,10 +59,14 @@ class GameManager {
     this.redTeam.player.move.x = player1Input.move;
     this.redTeam.player.move.y = player1Input.strafe;
     this.redTeam.player.turn = player1Input.turn;
+    this.redTeam.player.use = player1Input.use;
+    this.redTeam.player.fire = player1Input.fire;
     // Handle Player 2 Input
     this.blueTeam.player.move.x = player2Input.move;
     this.blueTeam.player.move.y = player2Input.strafe;
     this.blueTeam.player.turn = player2Input.turn;
+    this.blueTeam.player.use = player2Input.use;
+    this.blueTeam.player.fire = player2Input.fire;
 
     // Update Timers
 
@@ -76,6 +80,19 @@ class GameManager {
   updateTeam(dt, team, enemyTeam, flowField) {
     // Player Updates
     team.player.applyControls(dt);
+    team.player.showDroneShop = 0;
+    /*if (team.player.fire) {
+      if (false) {
+        team.addBullet(
+          team.player.pos,
+          team.player.angle,
+          team.player.bulletDamage,
+          team.player.bulletSpeed,
+          team.player.bulletRadius
+          "player"
+        );
+      }
+    }*/
     this.collisionManager.addEntity(team.player);
     // Station Updates
     for (let i = 0; i < team.stations.length; i++) {
@@ -87,6 +104,15 @@ class GameManager {
           stat.spawnQueue -= 1;
           team.drones.push(new Drone(spawn.x, spawn.y));
           stat.timer.reset();
+        }
+      }
+      // Player Interaction
+      let pDist = Vision.objectCast(team.player.pos, team.player.angle, stat.pos, stat.radius, 1.5);
+      if (pDist < 1) {
+        team.player.showDroneShop = 1;
+        if (team.player.use) {
+          team.player.use = false;
+          stat.spawnQueue += 1;
         }
       }
       this.collisionManager.addEntity(stat);

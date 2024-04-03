@@ -11,7 +11,8 @@ class Game {
     this.gfx = {
       "tiles": this.assets.loadImage("gfx/sprites_tiles.png"),
       "objects": this.assets.loadImage("gfx/sprites_objects.png"),
-      "entities": this.assets.loadImage("gfx/sprites_entities.png")
+      "entities": this.assets.loadImage("gfx/sprites_entities.png"),
+      "ui": this.assets.loadImage("gfx/sprites_ui.png")
     };
     // Init Sound Effects
     this.sfx = {};
