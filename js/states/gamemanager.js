@@ -79,20 +79,12 @@ class GameManager {
   };
   updateTeam(dt, team, enemyTeam, flowField) {
     // Player Updates
+    team.player.weaponCooldown.tick(dt);
     team.player.applyControls(dt);
     team.player.showDroneShop = 0;
-    /*if (team.player.fire) {
-      if (false) {
-        team.addBullet(
-          team.player.pos,
-          team.player.angle,
-          team.player.bulletDamage,
-          team.player.bulletSpeed,
-          team.player.bulletRadius
-          "player"
-        );
-      }
-    }*/
+    if (team.player.fire) {
+      team.spawnBullet(team.player);
+    }
     this.collisionManager.addEntity(team.player);
     // Station Updates
     for (let i = 0; i < team.stations.length; i++) {
@@ -132,6 +124,38 @@ class GameManager {
       }
       drone.applyControls(dt);
       this.collisionManager.addEntity(drone);
+    }
+    // Bullet Updates
+    for (let i = 0; i < team.bullets.length; i++) {
+      if (!team.bullets[i].alive) { continue; }
+      let bullet = team.bullets[i];
+      bullet.move.x = 1;
+      bullet.applyControls(dt);
+      bullet.applyVelocity();
+      if (this.map.getCollision(bullet.pos.x, bullet.pos.y)) {
+        bullet.alive = false;
+        continue;
+      }
+      if (enemyTeam.player.alive) {
+        if (bullet.pos.getDistance(enemyTeam.player.pos) < bullet.radius + enemyTeam.player.radius) {
+          bullet.alive = false;
+          // enemyTeam.player.takeDamage(bullet.damage);
+          continue;
+        }
+      }
+      for (let j = 0; j < enemyTeam.drones.length; j++) {
+        if (!enemyTeam.drones[j].alive) { continue; }
+        let drone = enemyTeam.drones[j];
+        if (bullet.pos.getDistance(drone.pos) > bullet.radius + drone.radius) { continue; }
+        bullet.alive = false;
+        drone.takeDamage(bullet.damage);
+      }
+      if (bullet.pos.getDistance(enemyTeam.heart.pos) < bullet.radius + enemyTeam.heart.radius) {
+        bullet.alive = false;
+        // enemyTeam.heart.takeDamage(bullet.damage);
+        continue;
+      }
+      // turrets go here
     }
     // Heart Updates
     this.collisionManager.addEntity(team.heart);

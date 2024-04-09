@@ -3,6 +3,8 @@
 class Turret extends Entity {
   constructor(x, y) {
     super(x, y, 0.5);
+    this.maxHealth = 150;
+    this.hp = this.maxHealth;
     this.movable = false;
     this.team = "";
     this.bulletDamage = 35;

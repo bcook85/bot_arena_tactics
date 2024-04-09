@@ -116,9 +116,9 @@ class PlayState extends State {
     this.cam.drawBackgroundColors(ctx, "rgb(150,150,150)", "rgb(50,50,50)");
     this.cam.drawWalls(ctx);
     this.cam.drawEntities(ctx);
-    if (this.game.mouse.touchEnabled) {
-      this.renderTouchControls(ctx);
-    }
+    // if (this.game.mouse.touchEnabled) {
+    //   this.renderTouchControls(ctx);
+    // }
     let player = this.gameManager.getPlayer(this.playerTeam);
     // Station Shop
     if (player.showDroneShop == 1) {
@@ -160,6 +160,12 @@ class PlayState extends State {
       let frame = Math.floor((angle / (Math.PI * 2)) * droneSprites.length);
       let sprite = this.entitySprites[droneSprites[frame]];
       this.cam.projectEntity(drone.pos.toArray(), sprite, this.droneSize, 0);
+    }
+    // Bullets
+    for (let i = 0; i < team.bullets.length; i++) {
+      let bullet = team.bullets[i];
+      if (!bullet.alive) { continue; }
+      this.cam.projectEntity(bullet.pos.toArray(), this.entitySprites[heartSprite], bullet.radius, 0.25);
     }
     // Stations
     for (let i = 0; i < team.stations.length; i++) {
@@ -247,65 +253,64 @@ class PlayState extends State {
       "fire": 0,
       "use": 0
     };
-    if (this.game.mouse.touchEnabled) {
-      this.moveControlButton.update(this.game.mouse);
-      if (this.moveControlButton.isClick) {
-        let angle = Math.atan2(
-          this.moveControlButton.y - this.game.mouse.y,
-          this.moveControlButton.x - this.game.mouse.x
-        ) - (Math.PI * 0.5);//shift down 90 as 0 is ->
-        angle = Vector.normalizeAngle(angle);
-        if (angle > Math.PI * 1.75 || angle < Math.PI * 0.25) {
-          gameControls.move += 1;
-        } else if (angle > Math.PI * 0.25 && angle < Math.PI * 0.75) {
-          gameControls.strafe += 1;
-        } else if (angle > Math.PI * 0.75 && angle < Math.PI * 1.25) {
-          gameControls.move -= 1;
-        } else if (angle > Math.PI * 1.25 && angle < Math.PI * 1.75) {
-          gameControls.strafe -= 1;
-        }
-      }
-      this.turnRightControlButton.update(this.game.mouse);
-      if (this.turnRightControlButton.isClick) {
-        gameControls.turn += 1;
-      }
-      this.turnLeftControlButton.update(this.game.mouse);
-      if (this.turnLeftControlButton.isClick) {
-        gameControls.turn -= 1;
-      }
-      this.useControlButton.update(this.game.mouse);
-      if (this.useControlButton.isClick) {
-        gameControls.use = 1;
-      }
-      this.fireControlButton.update(this.game.mouse);
-      if (this.fireControlButton.isClick) {
-        gameControls.fire = 1;
-      }
-    } else {
-      if (this.game.keys.isDown("KeyW") || this.game.keys.isDown("ArrowUp")) {
-      gameControls.move += 1;
-      }
-      if (this.game.keys.isDown("KeyS") || this.game.keys.isDown("ArrowDown")) {
-        gameControls.move -= 1;
-      }
-      if (this.game.keys.isDown("KeyA")) {
-        gameControls.strafe -= 1;
-      }
-      if (this.game.keys.isDown("KeyD")) {
-        gameControls.strafe += 1;
-      }
-      if (this.game.keys.isDown("KeyQ") || this.game.keys.isDown("ArrowLeft")) {
-        gameControls.turn -= 1;
-      }
-      if (this.game.keys.isDown("KeyE") || this.game.keys.isDown("ArrowRight")) {
-        gameControls.turn += 1;
-      }
-      if (this.game.keys.isUp("KeyF") || this.game.keys.isUp("Enter")) {
-        gameControls.use = 1;
-      }
-      if (this.game.keys.isDown("Space") || this.game.keys.isDown("ShiftRight")) {
-        gameControls.fire = 1;
-      }
+    // if (this.game.mouse.touchEnabled) {
+    //   this.moveControlButton.update(this.game.mouse);
+    //   if (this.moveControlButton.isClick) {
+    //     let angle = Math.atan2(
+    //       this.moveControlButton.y - this.game.mouse.y,
+    //       this.moveControlButton.x - this.game.mouse.x
+    //     ) - (Math.PI * 0.5);//shift down 90 as 0 is ->
+    //     angle = Vector.normalizeAngle(angle);
+    //     if (angle > Math.PI * 1.75 || angle < Math.PI * 0.25) {
+    //       gameControls.move += 1;
+    //     } else if (angle > Math.PI * 0.25 && angle < Math.PI * 0.75) {
+    //       gameControls.strafe += 1;
+    //     } else if (angle > Math.PI * 0.75 && angle < Math.PI * 1.25) {
+    //       gameControls.move -= 1;
+    //     } else if (angle > Math.PI * 1.25 && angle < Math.PI * 1.75) {
+    //       gameControls.strafe -= 1;
+    //     }
+    //   }
+    //   this.turnRightControlButton.update(this.game.mouse);
+    //   if (this.turnRightControlButton.isClick) {
+    //     gameControls.turn += 1;
+    //   }
+    //   this.turnLeftControlButton.update(this.game.mouse);
+    //   if (this.turnLeftControlButton.isClick) {
+    //     gameControls.turn -= 1;
+    //   }
+    //   this.useControlButton.update(this.game.mouse);
+    //   if (this.useControlButton.isClick) {
+    //     gameControls.use = 1;
+    //   }
+    //   this.fireControlButton.update(this.game.mouse);
+    //   if (this.fireControlButton.isClick) {
+    //     gameControls.fire = 1;
+    //   }
+    // }
+    if (this.game.keys.isDown("KeyW") || this.game.keys.isDown("ArrowUp")) {
+    gameControls.move += 1;
+    }
+    if (this.game.keys.isDown("KeyS") || this.game.keys.isDown("ArrowDown")) {
+      gameControls.move -= 1;
+    }
+    if (this.game.keys.isDown("KeyA")) {
+      gameControls.strafe -= 1;
+    }
+    if (this.game.keys.isDown("KeyD")) {
+      gameControls.strafe += 1;
+    }
+    if (this.game.keys.isDown("KeyQ") || this.game.keys.isDown("ArrowLeft")) {
+      gameControls.turn -= 1;
+    }
+    if (this.game.keys.isDown("KeyE") || this.game.keys.isDown("ArrowRight")) {
+      gameControls.turn += 1;
+    }
+    if (this.game.keys.isUp("KeyF") || this.game.keys.isUp("Enter")) {
+      gameControls.use = 1;
+    }
+    if (this.game.keys.isDown("Space") || this.game.keys.isDown("ShiftRight")) {
+      gameControls.fire = 1;
     }
     return gameControls;
   };

@@ -4,44 +4,51 @@ class Entity {
   constructor(x, y, r) {
     this.spawn = new Vector(x, y);
     this.alive = true;
+    this.maxHealth = 10;
+    this.hp = this.maxHealth;
     this.movable = true;
+    this.immortal = false;
     this.draw = true;
     this.collides = true;
     this.pos = new Vector(x, y);
     this.ppos = new Vector(x, y);
     this.vel = new Vector(0, 0);
+    this.turnVelocity = 0.0;
     this.radius = r;// radius
     this.angle = 0;
     this.move = new Vector(0, 0);
     this.turn = 0;
+    this.use = false;
+    this.fire = false;
     this.moveAcceleration = 0;
     this.turnAcceleration = 0;
-    this.turnSpeed = 0.0;
     this.maxMoveSpeed = 0;
     this.maxTurnSpeed = 0;
+    this.turnDrag = 0;
+    this.moveDrag = 0;
   };
   applyControls(dt) {
     // Calculate Turn
     if (this.turn < 0) {
-      if (this.turnSpeed > 0) {
-        this.turnSpeed -= this.turnAcceleration * dt;
+      if (this.turnVelocity > 0) {
+        this.turnVelocity -= this.turnAcceleration * dt;
       }
-      this.turnSpeed -= this.turnAcceleration * dt;
+      this.turnVelocity -= this.turnAcceleration * dt;
     } else if (this.turn > 0) {
-      if (this.turnSpeed < 0) {
-        this.turnSpeed += this.turnAcceleration * dt;
+      if (this.turnVelocity < 0) {
+        this.turnVelocity += this.turnAcceleration * dt;
       }
-      this.turnSpeed += this.turnAcceleration * dt;
+      this.turnVelocity += this.turnAcceleration * dt;
     } else {
-      if (Math.abs(this.turnSpeed) < this.turnAcceleration * dt) {
-        this.turnSpeed = 0.0;
+      if (Math.abs(this.turnVelocity) < this.turnAcceleration * dt) {
+        this.turnVelocity = 0.0;
       } else {
-        this.turnSpeed *= this.turnDrag;
+        this.turnVelocity *= this.turnDrag;
       }
     }
     // Apply Turning
-    this.turnSpeed = Math.max(-1, Math.min(1, this.turnSpeed));
-    this.angle += this.maxTurnSpeed * this.turnSpeed;
+    this.turnVelocity = Math.max(-1, Math.min(1, this.turnVelocity));
+    this.angle += this.maxTurnSpeed * this.turnVelocity;
     // Normalize Angle
     if (this.angle < 0) {
       this.angle += Math.PI * 2;
@@ -75,4 +82,14 @@ class Entity {
   applyVelocity() {
     this.pos = this.ppos;
   };
+  takeDamage(amount) {
+    if (this.immortal) {
+      return;
+    }
+    this.hp -= amount;
+    if (this.hp <= 0) {
+      this.hp = 0;
+      this.alive = false;
+    }
+  }
 };

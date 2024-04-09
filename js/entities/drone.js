@@ -3,6 +3,8 @@
 class Drone extends Entity {
   constructor(x, y) {
     super(x, y, 0.25);
+    this.maxHealth = 50;
+    this.hp = this.maxHealth;
     this.angle = Math.PI * 2 * Math.random();
     this.moveAcceleration = 0.01 / 60;
     this.turnAcceleration = 0.01 / 60;

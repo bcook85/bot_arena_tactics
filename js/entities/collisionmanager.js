@@ -13,57 +13,44 @@ class CollisionManager {
     this.quadTree.addEntity(e.pos.x, e.pos.y, this.entities.length - 1);
   };
   update() {
-    /*
-      To Try:
-        applyVelocity to all entities, THEN do the collision fixes. Maybe that's better.
-    */
     for (let i = 0; i < this.entities.length; i++) {
       let e1 = this.entities[i];
-      if (!e1.movable) {
-        continue;
-      }
+      if (!e1.movable) { continue; }
       // if too fast, need to repeat the below for each segment... eventually
       this.resolveMap(e1);
-      let nearList = this.quadTree.query(e1.pos.x, e1.pos.y, e1.radius, []);
+      let nearList = this.quadTree.query(e1.ppos.x, e1.ppos.y, e1.radius, []);
       for (let j = 0; j < nearList.length; j++) {
         let index = nearList[j];
-        if (i != index) {
-          this.resolveEntity(e1, this.entities[index]);
-        }
+        if (i == index) { continue; }
+        this.resolveEntity(e1, this.entities[index]);
       }
-      e1.applyVelocity();
-      if (this.getCollision(e1.pos.x, e1.pos.y)) {
-        e1.pos = e1.spawn.copy();
+    }
+    for (let i = 0; i < this.entities.length; i++) {
+      let e = this.entities[i];
+      e.applyVelocity();
+      if (this.getCollision(e.pos.x, e.pos.y)) {
+        e.pos = e.spawn.copy();
       }
     }
     this.entities = [];
     this.quadTree = new QuadTree(0, 0, this.mapWidth, this.mapHeight);
   };
   resolveEntity(e1, e2) {
-    if (e1.pos.getDistance(e2.pos) == 0.0) {
-      e1.vel = Vector.fromAngle(Math.random() * Math.PI * 2).normalize().mul(e1.radius);
-      e1.ppos = e1.pos.add(e1.vel);
-      this.resolveMap(e1);
-      e2.vel = Vector.fromAngle(Math.random() * Math.PI * 2).normalize().mul(e2.radius);
+    let dist = e1.ppos.getDistance(e2.ppos);
+    if (dist == 0.0 || dist > e1.radius + e2.radius) { return; }
+    let overlap = (dist - (e1.radius + e2.radius));
+    if (dist < e1.radius) {
+      dist = e1.radius + e2.radius;
+    }
+    if (e2.movable) {
+      overlap *= 0.5;
+      e2.vel = e2.ppos.sub(e2.ppos.sub(e1.ppos).normalize().mul(overlap).div(dist)).sub(e2.pos);
       e2.ppos = e2.pos.add(e2.vel);
       this.resolveMap(e2);
-      return true;
     }
-    let dist = e1.ppos.getDistance(e2.ppos);
-    let overlap = (dist - (e1.radius + e2.radius));
-    if (dist < e1.radius + e2.radius) {
-      if (e2.movable) {
-        overlap *= 0.5;
-        e2.vel = e2.ppos.sub(e2.ppos.sub(e1.ppos).normalize().mul(overlap).div(dist)).sub(e2.pos);
-        e2.ppos = e2.pos.add(e2.vel);
-        this.resolveMap(e2);
-      }
-      e1.vel = e1.ppos.sub(e1.ppos.sub(e2.ppos).normalize().mul(overlap).div(dist)).sub(e1.pos);
-      e1.ppos = e1.pos.add(e1.vel);
-      this.resolveMap(e1);
-      return true;
-    }
-    return false;
+    e1.vel = e1.ppos.sub(e1.ppos.sub(e2.ppos).normalize().mul(overlap).div(dist)).sub(e1.pos);
+    e1.ppos = e1.pos.add(e1.vel);
+    this.resolveMap(e1);
   };
   resolveMap(e) {
     let tl = new Vector(

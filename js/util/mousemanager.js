@@ -89,6 +89,7 @@ class MouseManager {
     );
     canvasElement.addEventListener(
       "touchstart", (e) => {
+        // need to pull this out into own class
         this.lastX = this.x;
         this.lastY = this.y;
         this.touchEnabled = true;
@@ -121,6 +122,8 @@ class MouseManager {
         e.preventDefault();
         this.buttons.touch.isDown = false;
         this.buttons.touch.isUp = true;
+        this.x = Math.min(Math.max(Math.floor((e.touches[0].clientX - canvasRect.left) * scaleX), 0), canvasElement.width);
+        this.y = Math.min(Math.max(Math.floor((e.touches[0].clientY - canvasRect.top) * scaleY), 0), canvasElement.height);
       }, false
     );
   };

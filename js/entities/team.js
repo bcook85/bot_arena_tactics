@@ -27,14 +27,30 @@ class Team {
     this.player.angle = this.player.pos.getAngle(this.heart.pos) - Math.PI;
     this.player.angle = Vector.normalizeAngle(this.player.angle);
   };
-  addBullet(pos, angle, damage, speed, radius, id) {
-    let b = undefined;
-    for (let i = 0; i < this.bullets.length; i++) {
-      if (!this.bullets[i].alive) {
-        this.bullets[i] = b;
-        return;
+  spawnBullet(ent) {
+    if (!ent.weaponCooldown.isDone()) { return; }
+    ent.weaponCooldown.reset();
+    for (let i = 0; i < ent.barrels.length; i++) {
+      let pos = ent.pos.add(ent.barrels[i].rot(ent.angle).mul(ent.radius));
+      let b = new Bullet(
+        pos.x,
+        pos.y,
+        ent.bulletRadius,
+        ent.angle,
+        ent.bulletDamage,
+        ent.bulletSpeed
+      );
+      let found = false;
+      for (let j = 0; j < this.bullets.length; j++) {
+        if (!this.bullets[j].alive) {
+          this.bullets[j] = b;
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        this.bullets.push(b); 
       }
     }
-    this.bullets.push(b);
   };
 };
