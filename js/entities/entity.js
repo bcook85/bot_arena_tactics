@@ -55,10 +55,7 @@ class Entity {
       this.angle -= Math.PI * 2;
     }
     // Calculate Acceleration
-    let acc = new Vector(
-      this.move.x * this.moveAcceleration * dt,
-      this.move.y * this.moveAcceleration * dt
-    ).rot(this.angle);
+    let acc = this.move.normalize().mul(this.moveAcceleration).mul(dt).rot(this.angle);
     // Update Velocity
     this.vel = this.vel.add(acc);
     // Apply Drag or Cap Speed at Max
