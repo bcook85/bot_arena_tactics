@@ -175,28 +175,37 @@ class Projector {
     if (!(left < this.width && left + size >= 0)) { return; }
     let finalLeft = left;
     let finalRight = Math.floor(left + size);
-    let firstDraw = undefined;
-    let firstWall = undefined;
-    for (let j = Math.max(0, finalLeft); j < Math.min(this.width, finalRight); j++) {
-      if (!firstWall && dist >= this.walls[j].distance) {
-        firstWall = j;
+    let leftDraw = Math.max(0, finalLeft);
+    let rightDraw = Math.min(this.width - 1, finalRight);
+    let slices = [];
+    let sliceStart = undefined;
+    for (let j = leftDraw; j <= rightDraw; j++) {
+      if (dist > this.walls[j].distance) {
+        if (sliceStart != undefined) {
+          slices.push([sliceStart, j - 1]);
+          sliceStart = undefined;
+        }
+      } else if (sliceStart == undefined) {
+        sliceStart = j;
       }
-      if (!firstDraw && dist <= this.walls[j].distance) {
-        firstDraw = j;
-      }
-      if (firstDraw && firstWall) { break; }
     }
-    let imageL = 0;
-    let imageW = sprite.width;
-    if (!firstDraw) { return; }
-    if (firstWall) {
-      if (firstWall < firstDraw) {
-        finalLeft = firstDraw;
-      } else {
-        finalRight = firstWall;
+    if (sliceStart != undefined) {
+      slices.push([sliceStart, rightDraw]);
+    }
+    if (slices.length == 0) { return; }
+    let sliceWidth = 0;
+    if (slices.length > 1) {
+      for (let j = 0; j < slices.length; j++) {
+        let w = slices[j][1] - slices[j][0];
+        if (w > sliceWidth) {
+          sliceWidth = w;
+          finalLeft = slices[j][0];
+          finalRight = slices[j][1];
+        }
       }
-      imageL = Math.floor(((finalLeft - left) / size) * sprite.width);
-      imageW = Math.ceil(((finalRight - finalLeft) / size) * sprite.width);
+    } else {
+      finalLeft = slices[0][0];
+      finalRight = slices[0][1];
     }
     let obj = {};
     obj.top = top;
@@ -204,8 +213,8 @@ class Projector {
     obj.sprite = sprite;
     obj.left = finalLeft;
     obj.right = finalRight;
-    obj.imageL = imageL;
-    obj.imageW = imageW;
+    obj.imageL = Math.floor(((finalLeft - left) / size) * sprite.width);
+    obj.imageW = Math.ceil(((finalRight - finalLeft) / size) * sprite.width);
     obj.dist = dist;
     for (let i = 0; i < this.objects.length; i++) {
       if (obj.dist > this.objects[i].dist) {
@@ -231,7 +240,6 @@ class Projector {
       );
     }
     this.objects = [];
-
   };
   static normalizeAngle(angle) {
     let newAngle = angle;

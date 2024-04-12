@@ -11,7 +11,6 @@ class Entity {
     this.draw = true;
     this.collides = true;
     this.pos = new Vector(x, y);
-    this.ppos = new Vector(x, y);
     this.vel = new Vector(0, 0);
     this.turnVelocity = 0.0;
     this.radius = r;// radius
@@ -76,11 +75,7 @@ class Entity {
         this.vel = new Vector(0, 0);
       }
     }
-    // Set Potential Position
-    this.ppos = this.pos.add(this.vel);
-  };
-  applyVelocity() {
-    this.pos = this.ppos;
+    this.pos = this.pos.add(this.vel);
   };
   takeDamage(amount) {
     if (this.immortal) {

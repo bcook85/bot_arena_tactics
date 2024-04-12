@@ -264,7 +264,6 @@ class GameMap {
     }
     // Init Start Position
     grid[fx][fy].dist = 0;
-    grid[fx][fy].angle = 0;
     // Calculate Distances
     let distanceNeighbors = [[-1, 0], [1, 0], [0, -1], [0, 1]];
     let toCheck = [];

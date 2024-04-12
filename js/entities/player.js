@@ -2,7 +2,7 @@
 
 class Player extends Entity {
   constructor(x, y) {
-    super(x, y, 0.5);
+    super(x, y, 0.35);
     this.maxHealth = 100;
     this.hp = this.maxHealth;
     this.angle = Math.PI * 2 * Math.random();
@@ -19,7 +19,7 @@ class Player extends Entity {
     // Weapon
     this.bulletDamage = 25;
     this.bulletRadius = 0.25;
-    this.bulletSpeed = 20 / 60;
+    this.bulletSpeed = 16 / 60;
     this.barrels = [
       new Vector(1, 1).normalize(),
       new Vector(1, -1).normalize()

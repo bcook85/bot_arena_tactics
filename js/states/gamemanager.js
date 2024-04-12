@@ -81,22 +81,20 @@ class GameManager {
     // Player Updates
     team.player.weaponCooldown.tick(dt);
     team.player.applyControls(dt);
-    team.player.showDroneShop = 0;
     if (team.player.fire) {
       team.spawnBullet(team.player);
     }
     this.collisionManager.addEntity(team.player);
     // Station Updates
+    team.player.showDroneShop = 0;
     for (let i = 0; i < team.stations.length; i++) {
       let stat = team.stations[i];
       stat.timer.tick(dt);
       if (stat.spawnQueue > 0 && stat.timer.isDone()) {
         let spawn = stat.spawnLocation;
-        if (this.isSpawnClear(spawn.x, spawn.y, 0.5, enemyTeam)) {
-          stat.spawnQueue -= 1;
-          team.drones.push(new Drone(spawn.x, spawn.y));
-          stat.timer.reset();
-        }
+        stat.spawnQueue -= 1;
+        team.drones.push(new Drone(spawn.x, spawn.y));
+        stat.timer.reset();
       }
       // Player Interaction
       let pDist = Vision.objectCast(team.player.pos, team.player.angle, stat.pos, stat.radius, 1.5);
@@ -129,9 +127,13 @@ class GameManager {
     for (let i = 0; i < team.bullets.length; i++) {
       if (!team.bullets[i].alive) { continue; }
       let bullet = team.bullets[i];
+      bullet.lifeSpan.tick(dt);
+      if (bullet.lifeSpan.isDone()) {
+        bullet.alive = false;
+        continue;
+      }
       bullet.move.x = 1;
       bullet.applyControls(dt);
-      bullet.applyVelocity();
       if (this.map.getCollision(bullet.pos.x, bullet.pos.y)) {
         bullet.alive = false;
         continue;
@@ -159,8 +161,5 @@ class GameManager {
     }
     // Heart Updates
     this.collisionManager.addEntity(team.heart);
-  };
-  isSpawnClear(x, y, r, enemyTeam) {
-    return true;
   };
 };

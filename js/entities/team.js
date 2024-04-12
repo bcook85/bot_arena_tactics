@@ -10,22 +10,30 @@ class Team {
     this.heartSpawn = heartSpawn;
     this.credits = 0;
     // Entities
+    this.heart = undefined;
+    this.stations = [];
     this.player = undefined;
     this.drones = [];
     this.bullets = [];
-    this.heart = new Heart(this.heartSpawn.x, this.heartSpawn.y);
-    this.stations = [];
-    for (let i = 0; i < this.stationSpawns.length; i++) {
-      let stat = new Station(this.stationSpawns[i].x, this.stationSpawns[i].y);
-      stat.spawnLocation = this.droneSpawns[Math.min(this.droneSpawns.length - 1, i)];
-      this.stations.push(stat);
-    }
+    this.spawnHeart();
+    this.spawnStations();
     this.spawnPlayer();
   };
   spawnPlayer() {
     this.player = new Player(this.playerSpawn.x, this.playerSpawn.y);
     this.player.angle = this.player.pos.getAngle(this.heart.pos) - Math.PI;
     this.player.angle = Vector.normalizeAngle(this.player.angle);
+  };
+  spawnHeart() {
+    this.heart = new Heart(this.heartSpawn.x, this.heartSpawn.y);
+  };
+  spawnStations() {
+    this.stations = [];
+    for (let i = 0; i < this.stationSpawns.length; i++) {
+      let stat = new Station(this.stationSpawns[i].x, this.stationSpawns[i].y);
+      stat.spawnLocation = this.droneSpawns[Math.min(this.droneSpawns.length - 1, i)];
+      this.stations.push(stat);
+    }
   };
   spawnBullet(ent) {
     if (!ent.weaponCooldown.isDone()) { return; }
