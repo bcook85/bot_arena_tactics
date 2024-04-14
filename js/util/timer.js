@@ -1,8 +1,8 @@
 'use strict';
 
 class Timer {
-  constructor(endCount) {
-    this.endCount = endCount * (1000 / 60);
+  constructor(frames) {
+    this.endCount = frames * (1000 / 60);
     this.count = 0;
     this.done = false;
   };

@@ -1,0 +1,26 @@
+Current:
+  Turret purchasing
+  Turret targetting & attack
+  Turret death/reset
+  Drone targetting & attack
+  Collector art
+  Add Collector placement to mapEditor
+  Add collector spawning in gameManager
+  Collector interaction (claim/steal)
+  Economy testing
+  Play testing for controls, physics, balance, and maybe even fun
+  Implement trainState & menus
+  Train train train an AI or 10
+  AI taunts
+  Implement AI into playState
+  Implement sfx & music
+  Redesign all artwork. All.
+  Title screen animations
+  Menu beautification
+  Create new maps
+  Make sfx
+  Make music
+
+Stretch:
+  Touch controls
+  purchasable weapons/upgrades (retrain AI)

@@ -155,6 +155,7 @@ class Projector {
     }
   };
   projectEntity(pos, sprite, drawSize, zLevel) {
+    // Check for in FOV
     let angleToTarget = Math.atan2(pos[1] - this.y, pos[0] - this.x)
     let a1 = Projector.normalizeAngle(this.a - this.objectFov);
     let a2 = Projector.normalizeAngle(this.a + this.objectFov);
@@ -164,49 +165,49 @@ class Projector {
       angleToTarget = Projector.normalizeAngle(angleToTarget);
     }
     if (angleToTarget < a1 || angleToTarget > a2) { return; }
+    // Check for maxViewDistance
     let a = angleToTarget - this.a;
     let fac = Math.cos(a);
     let dist = Math.hypot(pos[0] - this.x, pos[1] - this.y) * fac;
     if (dist > this.viewDistance || dist < 0.25) { return; }
+    // Calculate projection size & position
     let size = Math.floor(this.wallHeight * drawSize / dist);
     let bottom = Math.floor(this.halfHeight + (this.wallHeightHalf / dist));
     let top = bottom - size - (zLevel * (this.wallHeight / dist));
     let left = Math.floor(this.halfWidth + (Math.tan(a) * this.wallHeight) - (size * 0.5));
     if (!(left < this.width && left + size >= 0)) { return; }
+    // Limit drawing area to in front of walls
     let finalLeft = left;
     let finalRight = Math.floor(left + size);
     let leftDraw = Math.max(0, finalLeft);
     let rightDraw = Math.min(this.width - 1, finalRight);
     let slices = [];
     let sliceStart = undefined;
+    let sliceWidth = 0;
     for (let j = leftDraw; j <= rightDraw; j++) {
-      if (dist > this.walls[j].distance) {
+      if (dist >= this.walls[j].distance) {
         if (sliceStart != undefined) {
-          slices.push([sliceStart, j - 1]);
+          if (j - 1 - sliceStart > sliceWidth) {
+            slices.push([sliceStart, j - 1]);
+            sliceWidth = j - 1 - sliceStart;
+            finalLeft = sliceStart;
+            finalRight = j - 1;
+          }
           sliceStart = undefined;
         }
-      } else if (sliceStart == undefined) {
-        sliceStart = j;
+      } else {
+        if (sliceStart == undefined) {
+          sliceStart = j;
+        }
       }
     }
     if (sliceStart != undefined) {
       slices.push([sliceStart, rightDraw]);
+      finalLeft = sliceStart;
+      finalRight = rightDraw;
     }
     if (slices.length == 0) { return; }
-    let sliceWidth = 0;
-    if (slices.length > 1) {
-      for (let j = 0; j < slices.length; j++) {
-        let w = slices[j][1] - slices[j][0];
-        if (w > sliceWidth) {
-          sliceWidth = w;
-          finalLeft = slices[j][0];
-          finalRight = slices[j][1];
-        }
-      }
-    } else {
-      finalLeft = slices[0][0];
-      finalRight = slices[0][1];
-    }
+    // Add entity to draw queue
     let obj = {};
     obj.top = top;
     obj.size = size;

@@ -39,6 +39,10 @@ class GameManager {
     );
     // Game Objects
     this.turrets = [];
+    for (let i = 0; i < this.map.turrets.length; i++) {
+      let t = this.map.turrets[i];
+      this.turrets.push(new Turret(t.pos.x, t.pos.y, t.id));
+    }
     this.collectors = [];
     this.gameTimer = 0;
     this.collisionManager = new CollisionManager(
@@ -55,6 +59,8 @@ class GameManager {
     }
   };
   update(dt, player1Input, player2Input) {
+    this.collisionManager.reset();
+    
     // Handle Player 1 Input
     this.redTeam.player.move.x = player1Input.move;
     this.redTeam.player.move.y = player1Input.strafe;
@@ -69,6 +75,29 @@ class GameManager {
     this.blueTeam.player.fire = player2Input.fire;
 
     // Update Timers
+
+    // Update Turrets
+    for (let i = 0; i < this.turrets.length; i++) {
+      let turret = this.turrets[i];
+      turret.cooldown.tick(dt);
+      switch (turret.team) {
+        case "red":
+          // If no target, "scan"
+          turret.angle = Vector.normalizeAngle(turret.angle + (turret.turnSpeed * dt));
+          break;
+        case "blue":
+          turret.angle = Vector.normalizeAngle(turret.angle + (turret.turnSpeed * dt));
+          break;
+        default:// Unclaimed
+          turret.randomTurn.tick(dt);
+          if (turret.randomTurn.isDone()) {
+            turret.randomTurn.reset();
+            turret.angle = Math.random() * Math.PI * 2;
+          }
+          break;
+      }
+      this.collisionManager.addEntity(turret);
+    }
 
     // Update Teams
     this.updateTeam(dt, this.redTeam, this.blueTeam, this.blueHeartFlowField);
@@ -134,10 +163,12 @@ class GameManager {
       }
       bullet.move.x = 1;
       bullet.applyControls(dt);
+      // Map Collision
       if (this.map.getCollision(bullet.pos.x, bullet.pos.y)) {
         bullet.alive = false;
         continue;
       }
+      // Player Collision
       if (enemyTeam.player.alive) {
         if (bullet.pos.getDistance(enemyTeam.player.pos) < bullet.radius + enemyTeam.player.radius) {
           bullet.alive = false;
@@ -145,6 +176,7 @@ class GameManager {
           continue;
         }
       }
+      // Drone Collision
       for (let j = 0; j < enemyTeam.drones.length; j++) {
         if (!enemyTeam.drones[j].alive) { continue; }
         let drone = enemyTeam.drones[j];
@@ -152,12 +184,13 @@ class GameManager {
         bullet.alive = false;
         drone.takeDamage(bullet.damage);
       }
+      // Heart Collision
       if (bullet.pos.getDistance(enemyTeam.heart.pos) < bullet.radius + enemyTeam.heart.radius) {
         bullet.alive = false;
         // enemyTeam.heart.takeDamage(bullet.damage);
         continue;
       }
-      // turrets go here
+      // Turret Collision
     }
     // Heart Updates
     this.collisionManager.addEntity(team.heart);

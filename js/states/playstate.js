@@ -17,13 +17,16 @@ class PlayState extends State {
     this.blueStationSprite = 32;
     this.blueHeartSprite = 35;
     this.blueBulletSprite = [];
-    this.redTurretSprites = [];
-    this.blueTurretSprites = [];
-    this.unclaimedTurretSprites = [];
+    this.redTurretSprites = [20, 21, 22, 23];
+    this.blueTurretSprites = [28, 29, 30, 31];
+    this.unclaimedTurretSprites = [16, 17, 18, 19];
+    this.redBulletSprite = 36;
+    this.blueBulletSprite = 37;
     this.playerSize = 0.75;
     this.droneSize = 0.65;
     this.heartSize = 1.0;
     this.stationSize = 0.75;
+    this.turretSize = 1.0;
     // Game
     this.gameManager = new GameManager(this.game.playerData.selectedMap);
     // Player & AI
@@ -127,6 +130,19 @@ class PlayState extends State {
   };
   projectEntities() {
     // Turrets
+    for (let i = 0; i < this.gameManager.turrets.length; i++) {
+      let turret = this.gameManager.turrets[i];
+      let turretSprites = this.unclaimedTurretSprites;
+      if (turret.team == "red") {
+        turretSprites = this.redTurretSprites;
+      } else if (turret.team == "blue") {
+        turretSprites = this.blueTurretSprites;
+      }
+      let tAngle = Projector.normalizeAngle(turret.pos.getAngle(new Vector(this.cam.x, this.cam.y)) - turret.angle + (Math.PI * 0.25));
+      let tFrame = Math.floor((tAngle / (Math.PI * 2)) * turretSprites.length);
+      let tSprite = this.entitySprites[turretSprites[tFrame]];
+      this.cam.projectEntity(turret.pos.toArray(), tSprite, this.turretSize, 0);
+    }
     // Collectors
     // Teams
     this.renderTeam(
@@ -134,17 +150,19 @@ class PlayState extends State {
       this.redPlayerSprites,
       this.redDroneSprites,
       this.redStationSprite,
-      this.redHeartSprite
+      this.redHeartSprite,
+      this.redBulletSprite
     );
     this.renderTeam(
       this.gameManager.blueTeam,
       this.bluePlayerSprites,
       this.blueDroneSprites,
       this.blueStationSprite,
-      this.blueHeartSprite
+      this.blueHeartSprite,
+      this.blueBulletSprite
     );
   };
-  renderTeam(team, playerSprites, droneSprites, stationSprite, heartSprite) {
+  renderTeam(team, playerSprites, droneSprites, stationSprite, heartSprite, bulletSprite) {
     let camPos = new Vector(this.cam.x, this.cam.y);
     // Player
     let player = team.player;
@@ -165,7 +183,7 @@ class PlayState extends State {
     for (let i = 0; i < team.bullets.length; i++) {
       let bullet = team.bullets[i];
       if (!bullet.alive) { continue; }
-      this.cam.projectEntity(bullet.pos.toArray(), this.entitySprites[heartSprite], bullet.radius, 0.25);
+      this.cam.projectEntity(bullet.pos.toArray(), this.entitySprites[bulletSprite], bullet.radius, 0.25);
     }
     // Stations
     for (let i = 0; i < team.stations.length; i++) {

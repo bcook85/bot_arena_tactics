@@ -97,12 +97,15 @@ class GameMap {
               break;
             case 8:
               // Unclaimed Turret Spawn
+              this.turrets.push({"pos": pos, "id": ""});
               break;
             case 9:
               // Red Turret Spawn
+              this.turrets.push({"pos": pos, "id": "red"});
               break;
             case 10:
               // Blue Turret Spawn
+              this.turrets.push({"pos": pos, "id": "blue"});
               break;
           }
         }
