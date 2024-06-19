@@ -17,7 +17,7 @@ class Turret extends Entity {
       new Vector(1, 1).normalize(),
       new Vector(1, -1).normalize()
     ];
-    this.weaponCooldown = new Timer(20);
+    this.weaponCooldown = new Timer(45);
     this.randomTurn = new Timer(300 + Math.floor((Math.random() * 120) - 60));
     this.fire = false;
   };

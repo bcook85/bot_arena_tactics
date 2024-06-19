@@ -58,7 +58,7 @@ class MapEditorNewState extends State {
     }
     this.nextButton.update(this.game.mouse);
     if (this.nextButton.isClick) {
-      let newMap = new Map();
+      let newMap = new GameMap();
       newMap.create(this.width, this.height);
       MAPS.push(newMap);
       this.game.playerData.selectedMap = MAPS.length - 1;

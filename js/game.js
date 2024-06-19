@@ -67,10 +67,10 @@ class Game {
     this.states = [];
   };
   start() {
-    let t = 0;
-    this.animationFrameId = requestAnimationFrame((t) => this.loadLoop(t));
+    let ts = 0;
+    this.animationFrameId = requestAnimationFrame((ts) => this.loadLoop(ts));
   };
-  loadLoop() {
+  loadLoop(ts) {
     this.screen.ctx.fillStyle = "rgb(0,0,0)";
     this.screen.ctx.fillRect(0, 0, this.screenWidth, this.screenHeight);
     this.screen.ctx.font = `bold ${Math.floor(this.screenWidth * 0.1)}px Monospace`;

@@ -30,6 +30,7 @@ class GameMap {
     this.h2 = Math.floor(this.h * 0.5);
     this.tiles = [];
     this.collisions = [];
+    this.objects = [];
     for (let x = 0; x < this.w; x++) {
       let tiles = [];
       let collisions = [];
@@ -41,6 +42,7 @@ class GameMap {
       }
       this.tiles.push(tiles);
       this.collisions.push(collisions);
+      this.objects.push(objects);
     }
   };
   load(data) {
