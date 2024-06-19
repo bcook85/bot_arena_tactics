@@ -77,27 +77,7 @@ class GameManager {
     // Update Timers
 
     // Update Turrets
-    for (let i = 0; i < this.turrets.length; i++) {
-      let turret = this.turrets[i];
-      turret.cooldown.tick(dt);
-      switch (turret.team) {
-        case "red":
-          // If no target, "scan"
-          turret.angle = Vector.normalizeAngle(turret.angle + (turret.turnSpeed * dt));
-          break;
-        case "blue":
-          turret.angle = Vector.normalizeAngle(turret.angle + (turret.turnSpeed * dt));
-          break;
-        default:// Unclaimed
-          turret.randomTurn.tick(dt);
-          if (turret.randomTurn.isDone()) {
-            turret.randomTurn.reset();
-            turret.angle = Math.random() * Math.PI * 2;
-          }
-          break;
-      }
-      this.collisionManager.addEntity(turret);
-    }
+    this.updateTurrets(dt);
 
     // Update Teams
     this.updateTeam(dt, this.redTeam, this.blueTeam, this.blueHeartFlowField);
@@ -140,14 +120,22 @@ class GameManager {
     for (let i = 0; i < team.drones.length; i++) {
       if (!team.drones[i].alive) { continue; }
       let drone = team.drones[i];
-      // Search for target
-      // If no target, Navigate to Heart
-      let angle = flowField.getAngle(drone.pos.x, drone.pos.y);
-      if (angle !== undefined) {
-        drone.move.x = 1;
-        drone.angle = angle;
-      } else {
+      drone.weaponCooldown.tick(dt);
+      let enemyTurrets = this.getTurretsByTeam(enemyTeam.id);
+      let target = this.selectTargetNear(drone, enemyTurrets.concat([enemyTeam.player]).concat(enemyTeam.drones));
+      if (target !== undefined) {
         drone.move.x = 0;
+        drone.angle = drone.pos.getAngle(target.pos);
+        team.spawnBullet(drone);
+      } else {
+        // If no target, Navigate to Heart
+        let angle = flowField.getAngle(drone.pos.x, drone.pos.y);
+        if (angle !== undefined) {
+          drone.move.x = 1;
+          drone.angle = angle;
+        } else {
+          drone.move.x = 0;
+        }
       }
       drone.applyControls(dt);
       this.collisionManager.addEntity(drone);
@@ -191,8 +179,89 @@ class GameManager {
         continue;
       }
       // Turret Collision
+      for (let j = 0; j < this.turrets.length; j++) {
+      }
     }
     // Heart Updates
     this.collisionManager.addEntity(team.heart);
+  };
+  updateTurrets(dt) {
+    for (let i = 0; i < this.turrets.length; i++) {
+      let turret = this.turrets[i];
+      turret.weaponCooldown.tick(dt);
+      turret.fire = false;
+      switch (turret.team) {
+        case "red": {
+          let target = this.selectTargetNear(turret, this.blueTeam.drones.concat(this.blueTeam.player));
+          if (target !== undefined) {
+            turret.angle = turret.pos.getAngle(target.pos);
+            turret.fire = true;
+          } else {
+            // If no target, "scan"
+            turret.angle = Vector.normalizeAngle(turret.angle + (turret.turnSpeed * dt));
+          }
+          if (turret.fire) {
+            this.redTeam.spawnBullet(turret);
+          }
+          break;
+        }
+        case "blue": {
+          let target = this.selectTargetNear(turret, this.redTeam.drones.concat(this.redTeam.player));
+          if (target !== undefined) {
+            turret.angle = turret.pos.getAngle(target.pos);
+            turret.fire = true;
+          } else {
+            // If no target, "scan"
+            turret.angle = Vector.normalizeAngle(turret.angle + (turret.turnSpeed * dt));
+          }
+          if (turret.fire) {
+            this.blueTeam.spawnBullet(turret);
+          }
+          break;
+        }
+        default: {// Unclaimed
+          turret.randomTurn.tick(dt);
+          if (turret.randomTurn.isDone()) {
+            turret.randomTurn.reset();
+            turret.angle = Math.random() * Math.PI * 2;
+          }
+          break;
+        }
+      }
+      this.collisionManager.addEntity(turret);
+    }
+  };
+  selectTargetNear(obj, enemies) {
+    let dist = obj.targetRange;
+    let target = undefined;
+    for (let i = 0; i < enemies.length; i++) {
+      if (!enemies[i].alive) {
+        continue;
+      }
+      let d = obj.pos.getDistance(enemies[i].pos);
+      let a = obj.pos.getAngle(enemies[i].pos);
+      if (d < dist) {
+        let wallDist = Vision.wallCast(
+          obj.pos,
+          a,
+          (x, y) => this.map.getCollision(x, y),
+          obj.targetRange
+        ) * obj.targetRange;
+        if (d < wallDist) {
+          dist = d;
+          target = enemies[i];
+        }
+      }
+    }
+    return target;
+  };
+  getTurretsByTeam(team) {
+    let list = [];
+    for (let i = 0; i < this.turrets.length; i++) {
+      if (this.turrets[i].team == team) {
+        list.push(this.turrets[i]);
+      }
+    }
+    return list;
   };
 };

@@ -7,7 +7,6 @@ class CollisionManager {
     this.mapWidth = mapWidth;
     this.mapHeight = mapHeight;
     this.quadTree = new QuadTree(0, 0, this.mapWidth, this.mapHeight);
-    this.friction = 0.94;
   };
   reset() {
     this.entities = [];
@@ -40,14 +39,14 @@ class CollisionManager {
       overlap *= 0.5;
       let e2Normal = e1.pos.sub(e2.pos).normalize();
       e2.pos = e2.pos.sub(e2Normal.mul(overlap));
+      e2.vel = e2.vel.sub(e2Normal.mul(overlap));
       this.resolveMap(e2);
     }
     e1.pos = e1.pos.sub(e1Normal.mul(overlap));
-    e1.vel = e1.vel.mul(this.friction);
+    e1.vel = e1.vel.sub(e1Normal.mul(overlap));
     this.resolveMap(e1);
   };
   resolveMap(e) {
-    let applyFriction = false;
     for (let y = Math.floor(e.pos.y - 1); y <= Math.floor(e.pos.y + 1); y++) {
       for (let x = Math.floor(e.pos.x - 1); x <= Math.floor(e.pos.x + 1); x++) {
         if (this.getCollision(x, y)) {
@@ -58,18 +57,16 @@ class CollisionManager {
           let ray = near.sub(e.pos);
           if (ray.x == 0 && ray.y == 0) {
             e.pos = e.pos.sub(e.vel.normalize().mul(e.radius));
+            e.vel = e.vel.sub(e.vel.normalize().mul(e.radius));
           } else {
             let overlap = e.radius - ray.mag();
             if (overlap != undefined && overlap > 0) {
               e.pos = e.pos.sub(ray.normalize().mul(overlap));
-              applyFriction = true;
+              e.vel = e.vel.sub(ray.normalize().mul(overlap));
             }
           }
         }
       }
-    }
-    if (applyFriction) {
-      e.vel = e.vel.mul(this.friction);
     }
   };
 };

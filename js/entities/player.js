@@ -17,13 +17,14 @@ class Player extends Entity {
     this.showTurretShop = 0;
     this.isNearCollector = 0;
     // Weapon
-    this.bulletDamage = 25;
-    this.bulletRadius = 0.25;
-    this.bulletSpeed = 16 / 60;
+    this.targetRange = 10;
+    this.bulletDamage = 4;
+    this.bulletRadius = 0.2;
+    this.bulletSpeed = 35 / 60;
     this.barrels = [
       new Vector(1, 1).normalize(),
       new Vector(1, -1).normalize()
     ];
-    this.weaponCooldown = new Timer(30);
+    this.weaponCooldown = new Timer(10);
   };
 };

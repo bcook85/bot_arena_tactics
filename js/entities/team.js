@@ -57,7 +57,7 @@ class Team {
         }
       }
       if (!found) {
-        this.bullets.push(b); 
+        this.bullets.push(b);
       }
     }
   };

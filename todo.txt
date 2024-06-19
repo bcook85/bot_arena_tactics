@@ -1,8 +1,6 @@
 Current:
   Turret purchasing
-  Turret targetting & attack
   Turret death/reset
-  Drone targetting & attack
   Collector art
   Add Collector placement to mapEditor
   Add collector spawning in gameManager
