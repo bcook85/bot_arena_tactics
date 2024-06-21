@@ -1,51 +1,25 @@
 'use strict';
 
 class Game {
-  constructor() {
+  constructor(gameName, screenSize, canvasElement, startState) {
     // Init Game
-    this.title = "Bot Arena: Tactics";
-    this.screenWidth = 640;
-    this.screenHeight = 360;
+    this.title = gameName;
+    this.screenWidth = screenSize[0];
+    this.screenHeight = screenSize[1];
     // Init Graphics
     this.assets = new AssetContainer();
-    this.gfx = {
-      "tiles": this.assets.loadImage("gfx/sprites_tiles.png"),
-      "objects": this.assets.loadImage("gfx/sprites_objects.png"),
-      "entities": this.assets.loadImage("gfx/sprites_entities.png"),
-      "ui": this.assets.loadImage("gfx/sprites_ui.png")
-    };
+    this.gfx = {};
     // Init Sound Effects
     this.sfx = {};
     // Standard Color Definitions
-    this.colors = {
-      "red": "rgb(255,0,0)",
-      "green": "rgb(0,255,0)",
-      "blue": "rgb(0,0,255)",
-      "black": "rgb(0,0,0)",
-      "white": "rgb(255,255,255)",
-      "menuBackground": "rgb(0,0,0)",
-      "textNormal": "rgb(255,255,255)",
-      "textHighlight": "rgb(0,255,255)",
-      "header": "rgb(255,255,255)"
-    };
+    this.colors = {};
     // Standard Font Definitions
-    this.fonts = {
-      "title1": "bold 96px Monospace",
-      "title2": "bold 72px Monospace",
-      "small": "12px Monospace",
-      "medium": "18px Monospace",
-      "large": "32px Monospace",
-      "header": "bold 32px Monospace",
-      "button": "bold 18px Monospace"
-    };
+    this.fonts = {};
     // Player Data
-    this.playerData = {
-      "selectedMap": 0,
-      "selectedTeam": "red"
-    };
+    this.playerData = {};
     // Init Screen
     this.screen = new Screen(
-      document.getElementById("gameScreen"),
+      canvasElement,
       this.screenWidth,
       this.screenHeight,
       Screen.SCALING.aspectRatio
@@ -65,6 +39,7 @@ class Game {
     this.maxFrameTime = 1000 / this.fpsMin;
     // States
     this.states = [];
+    this.startState = startState;
   };
   start() {
     let ts = 0;
@@ -83,7 +58,8 @@ class Game {
       ,Math.floor(this.screenHeight * 0.5)
     );
     if (this.assets.isLoaded()) {
-      new MainState(this).enter();
+      this.states.push(new this.startState(this));
+      this.states[this.states.length - 1].enter();
       this.animationFrameId = requestAnimationFrame((ts) => this.runLoop(ts));
     } else {
       this.animationFrameId = requestAnimationFrame((ts) => this.loadLoop(ts));
@@ -114,5 +90,3 @@ class Game {
     this.mouse.reset();
   };
 };
-// Automatically Start Game
-//new Game().start();

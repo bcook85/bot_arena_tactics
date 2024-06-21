@@ -9,6 +9,10 @@ class TrainState extends State {
       this.game.fonts.button,
       48,32,72,24
     );
+    this.redSpecies = undefined;
+    this.blueSpecies = undefined;
+    this.currentBrain = 0;
+    
   };
   update(dt) {
     // User Input

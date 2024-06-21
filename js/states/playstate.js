@@ -28,7 +28,7 @@ class PlayState extends State {
     this.stationSize = 0.75;
     this.turretSize = 1.0;
     // Game
-    this.gameManager = new GameManager(this.game.playerData.selectedMap);
+    this.gameState = new GameState(this.game.playerData.selectedMap);
     // Player & AI
     this.aiVision = new Vision(16, 60, 32);
     this.cam = new Projector(
@@ -102,14 +102,14 @@ class PlayState extends State {
     controls[this.aiTeam] = this.getAIControls();
 
     // Update Game
-    this.gameManager.update(dt, controls[0], controls[1]);
+    this.gameState.update(dt, controls[0], controls[1]);
 
     // Project Walls
-    let player = this.gameManager.getPlayer(this.playerTeam);
+    let player = this.gameState.getPlayer(this.playerTeam);
     this.cam.set(player.pos.x, player.pos.y, player.angle);
     this.cam.projectWalls(
-      (x, y) => this.gameManager.map.getCollision(x, y),
-      (x, y) => this.gameManager.map.getTile(x, y)
+      (x, y) => this.gameState.map.getCollision(x, y),
+      (x, y) => this.gameState.map.getTile(x, y)
     );
 
     // Project Entities
@@ -122,7 +122,7 @@ class PlayState extends State {
     // if (this.game.mouse.touchEnabled) {
     //   this.renderTouchControls(ctx);
     // }
-    let player = this.gameManager.getPlayer(this.playerTeam);
+    let player = this.gameState.getPlayer(this.playerTeam);
     // Station Shop
     if (player.showDroneShop == 1) {
       this.renderStationMenu(ctx);
@@ -130,8 +130,8 @@ class PlayState extends State {
   };
   projectEntities() {
     // Turrets
-    for (let i = 0; i < this.gameManager.turrets.length; i++) {
-      let turret = this.gameManager.turrets[i];
+    for (let i = 0; i < this.gameState.turrets.length; i++) {
+      let turret = this.gameState.turrets[i];
       let turretSprites = this.unclaimedTurretSprites;
       if (turret.team == "red") {
         turretSprites = this.redTurretSprites;
@@ -146,7 +146,7 @@ class PlayState extends State {
     // Collectors
     // Teams
     this.renderTeam(
-      this.gameManager.redTeam,
+      this.gameState.redTeam,
       this.redPlayerSprites,
       this.redDroneSprites,
       this.redStationSprite,
@@ -154,7 +154,7 @@ class PlayState extends State {
       this.redBulletSprite
     );
     this.renderTeam(
-      this.gameManager.blueTeam,
+      this.gameState.blueTeam,
       this.bluePlayerSprites,
       this.blueDroneSprites,
       this.blueStationSprite,

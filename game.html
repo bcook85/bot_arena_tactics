@@ -42,7 +42,7 @@
     <script type="text/javascript" src="js/entities/vision.js"></script>
     <!-- Game States -->
     <script type="text/javascript" src="js/states/state.js"></script>
-    <script type="text/javascript" src="js/states/gamemanager.js"></script>
+    <script type="text/javascript" src="js/states/gamestate.js"></script>
     <script type="text/javascript" src="js/states/mainstate.js"></script>
     <script type="text/javascript" src="js/states/playsetupstate.js"></script>
     <script type="text/javascript" src="js/states/playmenustate.js"></script>
@@ -62,7 +62,44 @@
     <script type="text/javascript" src="js/game.js"></script>
     <!-- Start Game Script -->
     <script type="text/javascript">
-      new Game().start();
+      const game = new Game(
+        "Bot Arena: Tactics",
+        [640, 360],
+        document.getElementById("gameScreen"),
+        MainState
+      );
+      game.gfx = {
+        "tiles": game.assets.loadImage("gfx/sprites_tiles.png"),
+        "objects": game.assets.loadImage("gfx/sprites_objects.png"),
+        "entities": game.assets.loadImage("gfx/sprites_entities.png"),
+        "ui": game.assets.loadImage("gfx/sprites_ui.png")
+      };
+      game.sfx = {};
+      game.colors = {
+        "red": "rgb(255,0,0)",
+        "green": "rgb(0,255,0)",
+        "blue": "rgb(0,0,255)",
+        "black": "rgb(0,0,0)",
+        "white": "rgb(255,255,255)",
+        "menuBackground": "rgb(0,0,0)",
+        "textNormal": "rgb(255,255,255)",
+        "textHighlight": "rgb(0,255,255)",
+        "header": "rgb(255,255,255)"
+      };
+      game.fonts = {
+        "title1": "bold 96px Monospace",
+        "title2": "bold 72px Monospace",
+        "small": "12px Monospace",
+        "medium": "18px Monospace",
+        "large": "32px Monospace",
+        "header": "bold 32px Monospace",
+        "button": "bold 18px Monospace"
+      };
+      game.playerData = {
+        "selectedMap": 0,
+        "selectedTeam": "red"
+      };
+      game.start();
     </script>
   </body>
 </html>

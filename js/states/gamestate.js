@@ -1,6 +1,6 @@
 'use strict';
 
-class GameManager {
+class GameState {
   constructor(mapID) {
     // Map
     this.mapID = mapID;
