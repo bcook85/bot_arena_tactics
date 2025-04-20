@@ -8,5 +8,6 @@ class Bullet extends Entity {
     this.moveAcceleration = s;
     this.maxMoveSpeed = s;
     this.lifeSpan = new Timer(20);
+    this.team = "";
   };
 };

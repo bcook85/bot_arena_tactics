@@ -48,6 +48,7 @@ class Team {
         ent.bulletDamage,
         ent.bulletSpeed
       );
+      b.team = this.id;
       let found = false;
       for (let j = 0; j < this.bullets.length; j++) {
         if (!this.bullets[j].alive) {

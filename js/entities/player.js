@@ -25,6 +25,6 @@ class Player extends Entity {
       new Vector(1, 1).normalize(),
       new Vector(1, -1).normalize()
     ];
-    this.weaponCooldown = new Timer(10);
+    this.weaponCooldown = new Timer(20);
   };
 };

@@ -171,6 +171,7 @@ class GameState {
         if (bullet.pos.getDistance(drone.pos) > bullet.radius + drone.radius) { continue; }
         bullet.alive = false;
         drone.takeDamage(bullet.damage);
+        break;
       }
       // Heart Collision
       if (bullet.pos.getDistance(enemyTeam.heart.pos) < bullet.radius + enemyTeam.heart.radius) {
@@ -180,6 +181,18 @@ class GameState {
       }
       // Turret Collision
       for (let j = 0; j < this.turrets.length; j++) {
+        if (this.turrets[j].team == "") { continue; }
+        if (this.turrets[j].team == bullet.team) { continue; }
+        if (bullet.pos.getDistance(this.turrets[j].pos) <= bullet.radius + this.turrets[j].radius) {
+          bullet.alive = false;
+          this.turrets[j].takeDamage(bullet.damage);
+          if (this.turrets[j].hp <= 0) {
+            this.turrets[j].hp = this.turrets[j].maxHealth;
+            this.turrets[j].alive = true;
+            this.turrets[j].team = "";
+          }
+          break;
+        }
       }
     }
     // Heart Updates
@@ -224,6 +237,28 @@ class GameState {
           if (turret.randomTurn.isDone()) {
             turret.randomTurn.reset();
             turret.angle = Math.random() * Math.PI * 2;
+          }
+          // Claiming
+          let redPlayerDist = this.redTeam.player.pos.getDistance(turret.pos);
+          let bluePlayerDist = this.blueTeam.player.pos.getDistance(turret.pos);
+          let team = "";
+          if (redPlayerDist < bluePlayerDist && redPlayerDist < turret.captureRange) {
+            team = this.redTeam.id;
+          }
+          if (bluePlayerDist < redPlayerDist && bluePlayerDist < turret.captureRange) {
+            team = this.blueTeam.id;
+          }
+          if (team !== "") {
+            if (!turret.capturePoints[team]) {
+              turret.capturePoints[team] = 0;
+            }
+            turret.capturePoints[team] += turret.captureSpeed * dt;
+            if (turret.capturePoints[team] >= turret.captureThreshold) {
+              turret.capturePoints = {};
+              turret.team = team;
+              turret.hp = turret.maxHealth;
+              turret.alive = true;
+            }
           }
           break;
         }

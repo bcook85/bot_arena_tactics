@@ -9,15 +9,19 @@ class Turret extends Entity {
     this.movable = false;
     this.turnSpeed = 0.05 / 60;
     this.team = team;
+    this.captureRange = 1.5;
+    this.capturePoints = {};
+    this.captureSpeed = 0.001;
+    this.captureThreshold = 5.0;
     this.targetRange = 9.0;
-    this.bulletDamage = 12;
+    this.bulletDamage = 14;
     this.bulletSpeed = 24 / 60;
     this.bulletRadius = 0.35;
     this.barrels = [
       new Vector(1, 1).normalize(),
       new Vector(1, -1).normalize()
     ];
-    this.weaponCooldown = new Timer(45);
+    this.weaponCooldown = new Timer(60);
     this.randomTurn = new Timer(300 + Math.floor((Math.random() * 120) - 60));
     this.fire = false;
   };
